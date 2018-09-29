@@ -31,3 +31,7 @@ fun DreamEntity.toDomain(): Dream = Dream(
   updateDate = this.updateDate,
   dreamtDate = this.dreamtDate
 )
+
+fun Dream.toEntity(): DreamEntity = DreamEntity(
+  id, title, description, creationDate, updateDate, dreamtDate
+)
