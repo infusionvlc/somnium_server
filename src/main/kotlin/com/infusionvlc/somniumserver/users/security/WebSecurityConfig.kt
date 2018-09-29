@@ -41,12 +41,15 @@ class WebSecurityConfig(
   override fun configure(http: HttpSecurity) {
     http
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-      .cors().and()
-      .csrf().and()
-      .authorizeRequests().antMatchers("/auth/**").permitAll()
+      .authorizeRequests()
+      .antMatchers("/auth/**").permitAll()
+      .antMatchers("/v2/api-docs/**").permitAll()
+      .antMatchers("/swagger**/**").permitAll()
+      .antMatchers("/webjars/**").permitAll()
       .anyRequest().authenticated().and()
       .addFilterBefore(TokenAuthenticationFilter(tokenHelper, userDetailsService),
         UsernamePasswordAuthenticationFilter::class.java)
+      .csrf().and()
       .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
   }
 
