@@ -11,6 +11,7 @@ class FindUserByUsername {
     1,
     "test",
     "qwerty",
-    Role(1, "user"))
+    Role.userRole()
+  )
 
 }
