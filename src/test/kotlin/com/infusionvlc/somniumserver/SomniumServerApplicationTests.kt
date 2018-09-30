@@ -12,5 +12,4 @@ class SomniumServerApplicationTests {
   @Test
   fun contextLoads() {
   }
-
 }

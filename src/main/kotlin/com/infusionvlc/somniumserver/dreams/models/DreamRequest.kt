@@ -15,4 +15,3 @@ fun DreamRequest.toDomain(userId: Long): Dream = Dream(
   updateDate = System.currentTimeMillis(),
   dreamtDate = this.dreamtDate
 )
-

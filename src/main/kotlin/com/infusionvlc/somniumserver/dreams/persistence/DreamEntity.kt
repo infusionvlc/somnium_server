@@ -4,7 +4,14 @@ import com.infusionvlc.somniumserver.dreams.models.Dream
 import com.infusionvlc.somniumserver.users.models.User
 import com.infusionvlc.somniumserver.users.persistence.UserEntity
 import com.infusionvlc.somniumserver.users.persistence.toEntity
-import javax.persistence.*
+import javax.persistence.Entity
+import javax.persistence.FetchType
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
+import javax.persistence.Table
 
 @Entity
 @Table(name = "Dreams")
