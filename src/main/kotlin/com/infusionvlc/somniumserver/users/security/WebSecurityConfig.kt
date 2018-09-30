@@ -3,6 +3,7 @@ package com.infusionvlc.somniumserver.users.security
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.BeanIds
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
@@ -46,10 +47,15 @@ class WebSecurityConfig(
       .antMatchers("/v2/api-docs/**").permitAll()
       .antMatchers("/swagger**/**").permitAll()
       .antMatchers("/webjars/**").permitAll()
-      .anyRequest().authenticated().and()
+      .antMatchers("/h2-console/**").permitAll()
+      .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+      .anyRequest().authenticated()
+      .and()
+      .headers().frameOptions().sameOrigin()
+      .and()
       .addFilterBefore(TokenAuthenticationFilter(tokenHelper, userDetailsService),
         UsernamePasswordAuthenticationFilter::class.java)
-      .csrf().and()
+      .csrf().disable()
       .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
   }
 

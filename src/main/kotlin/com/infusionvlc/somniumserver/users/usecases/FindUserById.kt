@@ -7,11 +7,8 @@ import com.infusionvlc.somniumserver.users.persistence.toDomain
 import org.springframework.stereotype.Component
 
 @Component
-class FindUserByUsername(
-  private val dao: UserRepository
-) {
-  fun execute(username: String): Option<User> = Option
-    .fromNullable(dao.findByUsername(username))
+class FindUserById(private val dao: UserRepository) {
+  fun execute(id: Long): Option<User> = Option
+    .fromNullable(dao.findById(id).orElseGet { null })
     .map { it.toDomain() }
-
 }

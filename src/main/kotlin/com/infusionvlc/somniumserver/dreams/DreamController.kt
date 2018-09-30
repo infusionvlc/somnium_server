@@ -6,7 +6,7 @@ import com.infusionvlc.somniumserver.dreams.models.DreamRequest
 import com.infusionvlc.somniumserver.dreams.usecases.CreateDream
 import com.infusionvlc.somniumserver.dreams.usecases.GetAllDreams
 import com.infusionvlc.somniumserver.users.security.models.SecurityUser
-import com.infusionvlc.somniumserver.users.usecases.FindUserByUsername
+import io.swagger.annotations.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
@@ -16,41 +16,48 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import springfox.documentation.annotations.ApiIgnore
 
 @RestController
 @RequestMapping("/dreams/v1")
+@Api(value = "Dreams", description = "Endpoints for Dreams resources")
 class DreamController(
   private val getAllDreams: GetAllDreams,
-  private val createDream: CreateDream,
-  private val findUserByUsername: FindUserByUsername
+  private val createDream: CreateDream
 ) {
 
   @GetMapping("/")
+  @ApiOperation(value = "Get a feed of recent Dreams")
+  @ApiResponses(
+    ApiResponse(code = 200, response = Dream::class, responseContainer = "List", message = "Feed of dreams")
+  )
   fun getAll(@RequestParam("page") page: Int,
              @RequestParam("page_size") pageSize: Int): ResponseEntity<List<Dream>> =
     ResponseEntity.ok(getAllDreams.execute(page, pageSize))
 
   @PostMapping("/")
+  @ApiOperation(value = "Create a new Dream")
+  @ApiResponses(
+    ApiResponse(code = 201, response = Dream::class, message = ""),
+    ApiResponse(code = 400, message = "Validation error message")
+  )
   fun createDream(@RequestBody dreamRequest: DreamRequest,
-                  authentication: Authentication): ResponseEntity<*> {
+                  @ApiIgnore authentication: Authentication): ResponseEntity<*> {
     val requestUser = authentication.principal as SecurityUser
-    val user = findUserByUsername.execute(requestUser.username)
-
-    val result = createDream.execute(dreamRequest, user.id)
+    return createDream.execute(dreamRequest, requestUser.id)
       .fold(
         {
           ResponseEntity(when (it) {
             is DreamCreationErrors.TitleTooLong -> "Title is too long"
             is DreamCreationErrors.DescriptionTooLong -> "Description is too long"
-            is DreamCreationErrors.TitleMisssing -> "Title is missing"
+            is DreamCreationErrors.TitleMissing -> "Title is missing"
             is DreamCreationErrors.DescriptionMissing -> "Description is missing"
             is DreamCreationErrors.InvalidDate -> "Invalid dreamt date"
+            is DreamCreationErrors.CreatorNotFound -> "User with id ${it.userId} was not found"
           }, HttpStatus.BAD_REQUEST)
         },
         { ResponseEntity(it, HttpStatus.CREATED) }
       )
-
-    return ResponseEntity(result, HttpStatus.CREATED)
   }
 
 }
