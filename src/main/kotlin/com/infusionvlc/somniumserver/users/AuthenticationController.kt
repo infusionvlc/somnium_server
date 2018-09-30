@@ -41,5 +41,4 @@ class AuthenticationController(
     val user = registerUser.execute(request)
     return ResponseEntity(user.toResponse(), HttpStatus.CREATED)
   }
-
 }

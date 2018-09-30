@@ -13,5 +13,4 @@ class FindUserByUsername(
   fun execute(username: String): Option<User> = Option
     .fromNullable(dao.findByUsername(username))
     .map { it.toDomain() }
-
 }

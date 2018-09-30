@@ -100,6 +100,5 @@ class CreateDreamTest : StringSpec() {
       createDream.execute(dreamRequest, 0, 2000)
         .shouldBeRight()
     }
-
   }
 }
