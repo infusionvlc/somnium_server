@@ -6,7 +6,10 @@ import com.infusionvlc.somniumserver.dreams.models.DreamRequest
 import com.infusionvlc.somniumserver.dreams.usecases.CreateDream
 import com.infusionvlc.somniumserver.dreams.usecases.GetAllDreams
 import com.infusionvlc.somniumserver.users.security.models.SecurityUser
-import io.swagger.annotations.*
+import io.swagger.annotations.Api
+import io.swagger.annotations.ApiOperation
+import io.swagger.annotations.ApiResponse
+import io.swagger.annotations.ApiResponses
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.Authentication
@@ -31,8 +34,10 @@ class DreamController(
   @ApiResponses(
     ApiResponse(code = 200, response = Dream::class, responseContainer = "List", message = "Feed of dreams")
   )
-  fun getAll(@RequestParam("page") page: Int,
-             @RequestParam("page_size") pageSize: Int): ResponseEntity<List<Dream>> =
+  fun getAll(
+    @RequestParam("page") page: Int,
+    @RequestParam("page_size") pageSize: Int
+  ): ResponseEntity<List<Dream>> =
     ResponseEntity.ok(getAllDreams.execute(page, pageSize))
 
   @PostMapping("/")
@@ -41,8 +46,10 @@ class DreamController(
     ApiResponse(code = 201, response = Dream::class, message = ""),
     ApiResponse(code = 400, message = "Validation error message")
   )
-  fun createDream(@RequestBody dreamRequest: DreamRequest,
-                  @ApiIgnore authentication: Authentication): ResponseEntity<*> {
+  fun createDream(
+    @RequestBody dreamRequest: DreamRequest,
+    @ApiIgnore authentication: Authentication
+  ): ResponseEntity<*> {
     val requestUser = authentication.principal as SecurityUser
     return createDream.execute(dreamRequest, requestUser.id)
       .fold(
@@ -59,5 +66,4 @@ class DreamController(
         { ResponseEntity(it, HttpStatus.CREATED) }
       )
   }
-
 }

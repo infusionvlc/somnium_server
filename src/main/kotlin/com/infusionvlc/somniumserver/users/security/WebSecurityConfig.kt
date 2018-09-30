@@ -58,5 +58,4 @@ class WebSecurityConfig(
       .csrf().disable()
       .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
   }
-
 }
