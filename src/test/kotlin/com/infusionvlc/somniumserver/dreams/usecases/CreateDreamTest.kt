@@ -11,7 +11,6 @@ import com.infusionvlc.somniumserver.users.models.User
 import com.infusionvlc.somniumserver.users.usecases.FindUserById
 import io.kotlintest.assertions.arrow.either.shouldBeLeft
 import io.kotlintest.assertions.arrow.either.shouldBeRight
-import io.kotlintest.assertions.arrow.either.shouldNotBeRight
 import io.kotlintest.matchers.types.shouldBeTypeOf
 import io.kotlintest.specs.StringSpec
 import org.mockito.ArgumentMatchers.any
@@ -87,7 +86,7 @@ class CreateDreamTest : StringSpec() {
       val dreamRequest = DreamRequest("Test", "Description", 1000)
 
       val result = createDream.execute(dreamRequest, 0, 2000)
-      result.shouldNotBeRight()
+      result.shouldBeLeft()
       (result as Either.Left<DreamCreationErrors>).a.shouldBeTypeOf<DreamCreationErrors.CreatorNotFound>()
     }
 
