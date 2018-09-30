@@ -1,13 +1,10 @@
 package com.infusionvlc.somniumserver.dreams.persistence
 
 import com.infusionvlc.somniumserver.dreams.models.Dream
+import com.infusionvlc.somniumserver.users.models.User
 import com.infusionvlc.somniumserver.users.persistence.UserEntity
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.ManyToOne
-import javax.persistence.Table
+import com.infusionvlc.somniumserver.users.persistence.toEntity
+import javax.persistence.*
 
 @Entity
 @Table(name = "Dreams")
@@ -19,7 +16,9 @@ data class DreamEntity(
   val updateDate: Long = 0,
   val dreamtDate: Long = 0,
 
-  @ManyToOne val user: UserEntity = UserEntity()
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id")
+  val user: UserEntity = UserEntity()
 )
 
 fun DreamEntity.toDomain(): Dream = Dream(
@@ -32,6 +31,6 @@ fun DreamEntity.toDomain(): Dream = Dream(
   dreamtDate = this.dreamtDate
 )
 
-fun Dream.toEntity(): DreamEntity = DreamEntity(
-  id, title, description, creationDate, updateDate, dreamtDate
+fun Dream.toEntity(user: User): DreamEntity = DreamEntity(
+  id, title, description, creationDate, updateDate, dreamtDate, user.toEntity()
 )

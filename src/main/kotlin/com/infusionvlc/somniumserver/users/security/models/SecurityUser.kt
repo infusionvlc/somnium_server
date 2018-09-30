@@ -3,9 +3,10 @@ package com.infusionvlc.somniumserver.users.security.models
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
-data class SecurityUser(
-  private val name: String = "",
-  private val pswd: String = "",
+class SecurityUser(
+  val id: Long = 0,
+  private val username: String = "",
+  private val password: String = "",
   private val roles: List<Authority> = emptyList()
 ) : UserDetails {
 
@@ -13,11 +14,11 @@ data class SecurityUser(
 
   override fun isEnabled(): Boolean = true
 
-  override fun getUsername(): String = name
+  override fun getUsername(): String = username
 
   override fun isCredentialsNonExpired(): Boolean = true
 
-  override fun getPassword(): String = pswd
+  override fun getPassword(): String = password
 
   override fun isAccountNonExpired(): Boolean = true
 
