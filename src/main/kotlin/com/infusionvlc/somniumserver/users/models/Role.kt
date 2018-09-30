@@ -5,6 +5,6 @@ data class Role (
   val name: String
 ) {
   companion object {
-    fun userRole(): Role = Role(1, "user")
+    fun userRole(): Role = Role(1, "USER")
   }
 }
