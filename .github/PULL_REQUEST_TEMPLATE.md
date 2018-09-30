@@ -19,7 +19,7 @@ _If it cannot be tested explain why._
  - [ ] _Step 1_
  - [ ] _Step 2_
  
-### :floppy:disk: Requires DB migration?
+### :floppy_disk: Requires DB migration?
 
 - [ ] Nope, we can just merge this branch.
 - [ ] Yes, but we need to apply it before merging this branch.
