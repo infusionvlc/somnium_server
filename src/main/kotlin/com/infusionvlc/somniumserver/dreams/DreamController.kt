@@ -91,7 +91,7 @@ class DreamController(
   @ApiResponses(
     ApiResponse(code = 200, message = "Dream removed"),
     ApiResponse(code = 403, message = "User is not creator of Dream"),
-    ApiResponse(code = 404, message = "User/Dream was not found")
+    ApiResponse(code = 404, message = "Dream was not found")
   )
   fun deleteDream(
     @PathVariable id: Long,
@@ -106,8 +106,6 @@ class DreamController(
               ResponseEntity("User is not creator of dream", HttpStatus.FORBIDDEN)
             is DreamRemovalErrors.DreamNotFound ->
               ResponseEntity("Dream with id ${it.id} was not found", HttpStatus.NOT_FOUND)
-            is DreamRemovalErrors.CreatorNotFound ->
-              ResponseEntity("User with id ${it.id} was not found", HttpStatus.NOT_FOUND)
           }
         },
         { ResponseEntity.ok().build<Unit>() }
