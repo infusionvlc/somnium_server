@@ -5,6 +5,7 @@ import com.infusionvlc.somniumserver.dreams.models.DreamCreationErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRequest
 import com.infusionvlc.somniumserver.dreams.usecases.CreateDream
 import com.infusionvlc.somniumserver.dreams.usecases.GetAllDreams
+import com.infusionvlc.somniumserver.dreams.usecases.SearchDream
 import com.infusionvlc.somniumserver.users.security.models.SecurityUser
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
@@ -26,7 +27,8 @@ import springfox.documentation.annotations.ApiIgnore
 @Api(value = "Dreams", description = "Endpoints for Dreams resources")
 class DreamController(
   private val getAllDreams: GetAllDreams,
-  private val createDream: CreateDream
+  private val createDream: CreateDream,
+  private val searchDream: SearchDream
 ) {
 
   @GetMapping("/")
@@ -66,4 +68,16 @@ class DreamController(
         { ResponseEntity(it, HttpStatus.CREATED) }
       )
   }
+
+  @GetMapping("/search")
+  @ApiOperation(value = "Search dream by title")
+  @ApiResponses(
+    ApiResponse(code = 200, response = Dream::class, responseContainer = "List", message = "Dreams result")
+  )
+  fun searchDream(
+    @RequestParam("page") page: Int,
+    @RequestParam("page_size") pageSize: Int,
+    @RequestParam("title") title: String
+  ): ResponseEntity<List<Dream>> =
+    ResponseEntity.ok(searchDream(title, page, pageSize))
 }
