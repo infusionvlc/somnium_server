@@ -6,5 +6,5 @@ import org.springframework.data.repository.PagingAndSortingRepository
 
 interface DreamRepository : PagingAndSortingRepository<DreamEntity, Long> {
 
-  fun findByTitleLike(title: String, pageable: Pageable): Page<DreamEntity>
+  fun findByTitleContainingIgnoreCase(title: String, pageable: Pageable): Page<DreamEntity>
 }

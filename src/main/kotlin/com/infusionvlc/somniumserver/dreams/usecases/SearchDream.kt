@@ -11,7 +11,7 @@ class SearchDream(
   private val dao: DreamRepository
 ) {
   operator fun invoke(title: String, page: Int, pageSize: Int): List<Dream> =
-    dao.findByTitleLike(title, PageRequest.of(page, pageSize))
+    dao.findByTitleContainingIgnoreCase(title, PageRequest.of(page, pageSize))
       .map { it.toDomain() }
       .toList()
 }
