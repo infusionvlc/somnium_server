@@ -17,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
 
-
 @RunWith(SpringRunner::class)
 @SpringBootTest()
 class SearchDreamTest : WordSpec() {
@@ -29,7 +28,6 @@ class SearchDreamTest : WordSpec() {
 
     private fun createDream(title: String, user: UserEntity): DreamEntity =
       DreamEntity(0, title, "He was in my dreams", 3, 23, 3, user)
-
   }
 
   @Autowired
@@ -42,7 +40,6 @@ class SearchDreamTest : WordSpec() {
 
   override fun beforeSpec(description: Description, spec: Spec) {
     TestContextManager(this.javaClass).prepareTestInstance(this)
-
   }
 
   init {
@@ -67,7 +64,7 @@ class SearchDreamTest : WordSpec() {
         searchResponse.body!! shouldContain NOT_PASSING_TESTS_DREAM
       }
 
-      "case insensitive" {
+      "Case insensitive" {
         val searchResponse = controller.searchDream(0, 20, "FREDDY krueger")
 
         searchResponse.body!! shouldContain FREDDY_DREAM
