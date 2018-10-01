@@ -38,7 +38,6 @@ class EditDreamTest : StringSpec() {
       result.shouldBeLeft()
       (result as Either.Left<DreamEditionErrors>).a.shouldBeTypeOf<DreamEditionErrors.DreamNotFound>()
     }
-
   }
 
   private fun mockWillFindDream() {
@@ -48,5 +47,4 @@ class EditDreamTest : StringSpec() {
   private fun mockWontFindDream() {
     `when`(mockDao.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.empty())
   }
-
 }
