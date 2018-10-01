@@ -54,7 +54,7 @@ class DreamController(
   @PostMapping("/")
   @ApiOperation(value = "Create a new Dream")
   @ApiResponses(
-    ApiResponse(code = 201, response = Dream::class, message = ""),
+    ApiResponse(code = 201, response = Dream::class, message = "Dream is created"),
     ApiResponse(code = 400, message = "Validation error message")
   )
   fun createDream(
@@ -69,6 +69,13 @@ class DreamController(
   }
 
   @PutMapping("/{id}")
+  @ApiOperation(value = "Edit an existing Dream")
+  @ApiResponses(
+    ApiResponse(code = 200, response = Dream::class, message = "Dream is updated"),
+    ApiResponse(code = 403, message = "User is not creator of Dream"),
+    ApiResponse(code = 404, message = "Dream was not found"),
+    ApiResponse(code = 400, message = "Validation error message")
+  )
   fun editDream(
     @RequestBody dreamRequest: DreamRequest,
     @PathVariable id: Long,
