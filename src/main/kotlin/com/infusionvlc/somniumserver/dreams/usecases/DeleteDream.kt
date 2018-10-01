@@ -5,7 +5,6 @@ import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
 import com.infusionvlc.somniumserver.base.toOption
-import com.infusionvlc.somniumserver.dreams.models.Dream
 import com.infusionvlc.somniumserver.dreams.models.DreamRemovalErrors
 import com.infusionvlc.somniumserver.dreams.persistence.DreamRepository
 import com.infusionvlc.somniumserver.dreams.persistence.toDomain
@@ -27,7 +26,4 @@ class DeleteDream(private val dao: DreamRepository) {
       }
       .map { dao.deleteById(it.id) }
   }
-
-  private fun isUserCreatorOfDream(userId: Long, dream: Dream): Boolean =
-    dream.userId == userId
 }
