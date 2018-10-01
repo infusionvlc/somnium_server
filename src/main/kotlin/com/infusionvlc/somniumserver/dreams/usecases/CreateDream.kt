@@ -33,9 +33,9 @@ class CreateDream(
       .map { it.toDomain() }
 
   private fun validate(dream: Dream, currentTime: Long): Either<DreamCreationErrors, Dream> = when {
-    dream.title.length >= 40 -> DreamCreationErrors.TitleTooLong.left()
+    dream.title.length > 40 -> DreamCreationErrors.TitleTooLong.left()
     dream.title.isBlank() -> DreamCreationErrors.TitleMissing.left()
-    dream.description.length >= 200 -> DreamCreationErrors.DescriptionTooLong.left()
+    dream.description.length > 200 -> DreamCreationErrors.DescriptionTooLong.left()
     dream.description.isBlank() -> DreamCreationErrors.DescriptionMissing.left()
     dream.dreamtDate > currentTime -> DreamCreationErrors.InvalidDate.left()
     else -> dream.right()
