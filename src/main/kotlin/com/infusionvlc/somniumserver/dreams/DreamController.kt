@@ -73,6 +73,12 @@ class DreamController(
   }
 
   @DeleteMapping("/{id}")
+  @ApiOperation(value = "Delete an existing Dream")
+  @ApiResponses(
+    ApiResponse(code = 200, message = "Dream removed"),
+    ApiResponse(code = 403, message = "User is not creator of Dream"),
+    ApiResponse(code = 404, message = "User/Dream was not found")
+  )
   fun deleteDream(
     @PathVariable id: Long,
     @ApiIgnore authentication: Authentication
