@@ -67,8 +67,6 @@ dependencies {
   testImplementation('org.springframework.boot:spring-boot-starter-test')
   testImplementation('org.springframework.security:spring-security-test')
   testImplementation "io.kotlintest:kotlintest-runner-junit5:$kotlintestVersion"
-  testImplementation "io.kotlintest:kotlintest-extensions-spring:$kotlintestVersion"
-  testImplementation "org.apache.httpcomponents:httpclient:4.5.6"
   testImplementation "io.kotlintest:kotlintest-assertions-arrow:$kotlintestVersion"
 
   ktlint "com.github.shyiko:ktlint:0.20.0"
