@@ -4,6 +4,7 @@ import com.infusionvlc.somniumserver.dreams.models.Dream
 import com.infusionvlc.somniumserver.users.models.User
 import com.infusionvlc.somniumserver.users.persistence.UserEntity
 import com.infusionvlc.somniumserver.users.persistence.toEntity
+import com.infusionvlc.somniumserver.tags.persistence.TagEntity
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
@@ -12,6 +13,7 @@ import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
 import javax.persistence.Table
+import javax.persistence.ManyToMany
 
 @Entity
 @Table(name = "Dreams")
@@ -25,7 +27,10 @@ data class DreamEntity(
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
-  val user: UserEntity = UserEntity()
+  val user: UserEntity = UserEntity(),
+
+  @ManyToMany(mappedBy = "dreams")
+  var tags: List<TagEntity> = mutableListOf()
 )
 
 fun DreamEntity.toDomain(): Dream = Dream(
