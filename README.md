@@ -20,7 +20,7 @@ Please check out our Wiki for more details on our documentation.
 
 Our team is made up of people with very different experiences: developers, designers, translators... **All help is always welcome** and we are always looking for more people to participate in all our projects.
 
-If you wish, [you can send us an email](mailto: hola@infusionvlc.com) and tell more about yourself and what you want to help out.
+If you wish, [you can send us an email](mailto:hola@infusionvlc.com) and tell more about yourself and what you want to help out.📮
 
 If you are interested in collaborating with us in the development of the web, you can find the instructions in [our wiki](https://github.com/infusionvlc/infusion/wiki) 📓.
 
