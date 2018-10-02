@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 class SearchDream(
   private val dao: DreamRepository
 ) {
-  operator fun invoke(title: String, page: Int, pageSize: Int): List<Dream> =
+  fun execute(title: String, page: Int, pageSize: Int): List<Dream> =
     dao.findByTitleContainingIgnoreCase(title, PageRequest.of(page, pageSize))
       .map { it.toDomain() }
       .toList()

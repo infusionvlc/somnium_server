@@ -79,5 +79,5 @@ class DreamController(
     @RequestParam("page_size") pageSize: Int,
     @RequestParam("title") title: String
   ): ResponseEntity<List<Dream>> =
-    ResponseEntity.ok(searchDream(title, page, pageSize))
+    ResponseEntity.ok(searchDream.execute(title, page, pageSize))
 }
