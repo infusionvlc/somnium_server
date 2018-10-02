@@ -45,9 +45,9 @@ class CreateDreamTest : StringSpec() {
     "If dream description is empty an error should be returned" {
       findUserMockWillReturnUser()
 
-      val emptyTitleDreamRequest = DreamRequest(title = "Test", dreamtDate = 1000)
+      val emptyDescriptionDreamRequest = DreamRequest(title = "Test", dreamtDate = 1000)
 
-      createDream.execute(emptyTitleDreamRequest, 0, 2000)
+      createDream.execute(emptyDescriptionDreamRequest, 0, 2000)
         .shouldBeLeft(DreamCreationErrors.DescriptionMissing)
     }
 
@@ -55,9 +55,9 @@ class CreateDreamTest : StringSpec() {
       findUserMockWillReturnUser()
 
       val longTitle = "x".repeat(41)
-      val emptyTitleDreamRequest = DreamRequest(longTitle, "Test", 1000)
+      val longTitleDreamRequest = DreamRequest(longTitle, "Test", 1000)
 
-      createDream.execute(emptyTitleDreamRequest, 0, 2000)
+      createDream.execute(longTitleDreamRequest, 0, 2000)
         .shouldBeLeft(DreamCreationErrors.TitleTooLong)
     }
 
@@ -65,18 +65,18 @@ class CreateDreamTest : StringSpec() {
       findUserMockWillReturnUser()
 
       val longDescription = "x".repeat(201)
-      val emptyTitleDreamRequest = DreamRequest("Test", longDescription, 1000)
+      val longDescriptionDreamRequest = DreamRequest("Test", longDescription, 1000)
 
-      createDream.execute(emptyTitleDreamRequest, 0, 2000)
+      createDream.execute(longDescriptionDreamRequest, 0, 2000)
         .shouldBeLeft(DreamCreationErrors.DescriptionTooLong)
     }
 
     "If dream dreamt date is placed in the future an error should be returned" {
       findUserMockWillReturnUser()
 
-      val emptyTitleDreamRequest = DreamRequest("Test", "Description", 2000)
+      val futureDateDreamRequest = DreamRequest("Test", "Description", 2000)
 
-      createDream.execute(emptyTitleDreamRequest, 0, 1000)
+      createDream.execute(futureDateDreamRequest, 0, 1000)
         .shouldBeLeft(DreamCreationErrors.InvalidDate)
     }
 
