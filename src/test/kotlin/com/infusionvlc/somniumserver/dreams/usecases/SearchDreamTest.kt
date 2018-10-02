@@ -1,5 +1,6 @@
-package com.infusionvlc.somniumserver.dreams
+package com.infusionvlc.somniumserver.dreams.usecases
 
+import com.infusionvlc.somniumserver.dreams.DreamController
 import com.infusionvlc.somniumserver.dreams.models.Dream
 import com.infusionvlc.somniumserver.dreams.persistence.DreamEntity
 import com.infusionvlc.somniumserver.dreams.persistence.DreamRepository
