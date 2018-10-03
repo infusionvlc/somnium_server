@@ -15,16 +15,15 @@ import io.kotlintest.shouldBe
 import io.kotlintest.specs.WordSpec
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.client.RestClientTest
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.TestContextManager
 import org.springframework.test.context.junit4.SpringRunner
-import org.springframework.web.client.RestTemplate
 
 @RunWith(SpringRunner::class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SearchDreamIntegrationTest : WordSpec() {
 
   companion object {
@@ -37,6 +36,9 @@ class SearchDreamIntegrationTest : WordSpec() {
   }
 
   private val restTemplate = TestRestTemplate().restTemplate
+
+  @LocalServerPort
+  var port: Int = 0
 
   @Autowired
   lateinit var dreamDao: DreamRepository
@@ -53,7 +55,7 @@ class SearchDreamIntegrationTest : WordSpec() {
 
       "Get Freddy Krueger dream if contains \"fre\" words" {
         val result = restTemplate
-          .getForEntityAuthorized<Array<Dream>>("http://localhost:8080/dreams/v1/search?title=fre&page=0&page_size=20")
+          .getForEntityAuthorized<Array<Dream>>("http://localhost:$port/dreams/v1/search?title=fre&page=0&page_size=20")
 
         result.statusCode shouldBe HttpStatus.OK
         result.body!!.toList() shouldContain FREDDY_DREAM
@@ -61,7 +63,7 @@ class SearchDreamIntegrationTest : WordSpec() {
 
       "Get all dreams which contain T" {
         val result = restTemplate
-          .getForEntityAuthorized<Array<Dream>>("http://localhost:8080/dreams/v1/search?title=t&page=0&page_size=20")
+          .getForEntityAuthorized<Array<Dream>>("http://localhost:$port/dreams/v1/search?title=t&page=0&page_size=20")
 
         result.statusCode shouldBe HttpStatus.OK
         result.body!!.toList() shouldContainAll listOf(NOT_PASSING_TESTS_DREAM, NUN_DREAM)
@@ -69,7 +71,7 @@ class SearchDreamIntegrationTest : WordSpec() {
 
       "Get Not passing test dream if search by the complete title" {
         val result = restTemplate
-          .getForEntityAuthorized<Array<Dream>>("http://localhost:8080/dreams/v1/search?title=My tests don't pass&page=0&page_size=20")
+          .getForEntityAuthorized<Array<Dream>>("http://localhost:$port/dreams/v1/search?title=My tests don't pass&page=0&page_size=20")
 
         result.statusCode shouldBe HttpStatus.OK
         result.body!!.toList() shouldContain NOT_PASSING_TESTS_DREAM
@@ -77,7 +79,7 @@ class SearchDreamIntegrationTest : WordSpec() {
 
       "Case insensitive" {
         val result = restTemplate
-          .getForEntityAuthorized<Array<Dream>>("http://localhost:8080/dreams/v1/search?title=FREDDY krueger&page=0&page_size=20")
+          .getForEntityAuthorized<Array<Dream>>("http://localhost:$port/dreams/v1/search?title=FREDDY krueger&page=0&page_size=20")
 
         result.statusCode shouldBe HttpStatus.OK
         result.body!!.toList() shouldContain FREDDY_DREAM
