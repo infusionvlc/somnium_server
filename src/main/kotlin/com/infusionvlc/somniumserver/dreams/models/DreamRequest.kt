@@ -3,7 +3,8 @@ package com.infusionvlc.somniumserver.dreams.models
 data class DreamRequest(
   val title: String = "",
   val description: String = "",
-  val dreamtDate: Long = 0
+  val dreamtDate: Long = 0,
+  val isPublic: Boolean = true
 )
 
 fun DreamRequest.toDomain(userId: Long): Dream = Dream(
@@ -13,5 +14,6 @@ fun DreamRequest.toDomain(userId: Long): Dream = Dream(
   userId = userId,
   creationDate = System.currentTimeMillis(),
   updateDate = System.currentTimeMillis(),
-  dreamtDate = this.dreamtDate
+  dreamtDate = this.dreamtDate,
+  isPublic = this.isPublic
 )
