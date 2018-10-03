@@ -50,9 +50,12 @@ class DreamController(
   )
   fun getAll(
     @RequestParam("page") page: Int,
-    @RequestParam("page_size") pageSize: Int
-  ): ResponseEntity<List<Dream>> =
-    ResponseEntity.ok(getAllDreams.execute(page, pageSize))
+    @RequestParam("page_size") pageSize: Int,
+    @ApiIgnore authentication: Authentication
+  ): ResponseEntity<List<Dream>> {
+    val requestUser = authentication.principal as SecurityUser
+    return ResponseEntity.ok(getAllDreams.execute(requestUser.id, page, pageSize))
+  }
 
   @GetMapping("/{id}")
   @ApiOperation(value = "Get details of a Dream")
@@ -64,7 +67,7 @@ class DreamController(
   fun getDreamDetails(
     @PathVariable("id") dreamId: Long,
     @ApiIgnore authentication: Authentication
-  ) : ResponseEntity<*> {
+  ): ResponseEntity<*> {
     val requestUser = authentication.principal as SecurityUser
     return getDreamById.execute(dreamId, requestUser.id)
       .fold(

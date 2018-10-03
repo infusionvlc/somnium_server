@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class GetDreamById(private val dao: DreamRepository) {
-  fun execute(dreamId: Long, userId: Long) : Either<DreamDetailErrors, Dream> = dao.findById(dreamId).toOption()
+  fun execute(dreamId: Long, userId: Long): Either<DreamDetailErrors, Dream> = dao.findById(dreamId).toOption()
     .map { it.toDomain() }
     .toEither { DreamDetailErrors.DreamNotFound(dreamId) }
     .flatMap {
