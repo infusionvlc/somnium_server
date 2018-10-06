@@ -9,6 +9,7 @@ import com.infusionvlc.somniumserver.dreams.usecases.CreateDream
 import com.infusionvlc.somniumserver.dreams.usecases.DeleteDream
 import com.infusionvlc.somniumserver.dreams.usecases.EditDream
 import com.infusionvlc.somniumserver.dreams.usecases.GetAllDreams
+import com.infusionvlc.somniumserver.dreams.usecases.SearchDream
 import com.infusionvlc.somniumserver.users.security.models.SecurityUser
 import io.swagger.annotations.Api
 import io.swagger.annotations.ApiOperation
@@ -35,7 +36,8 @@ class DreamController(
   private val getAllDreams: GetAllDreams,
   private val createDream: CreateDream,
   private val editDream: EditDream,
-  private val deleteDream: DeleteDream
+  private val deleteDream: DeleteDream,
+  private val searchDream: SearchDream
 ) {
 
   @GetMapping("/")
@@ -48,6 +50,18 @@ class DreamController(
     @RequestParam("page_size") pageSize: Int
   ): ResponseEntity<List<Dream>> =
     ResponseEntity.ok(getAllDreams.execute(page, pageSize))
+
+  @GetMapping("/search")
+  @ApiOperation(value = "Search dream by title")
+  @ApiResponses(
+    ApiResponse(code = 200, response = Dream::class, responseContainer = "List", message = "Dreams result")
+  )
+  fun searchDream(
+    @RequestParam("page") page: Int,
+    @RequestParam("page_size") pageSize: Int,
+    @RequestParam("title") title: String
+  ): ResponseEntity<List<Dream>> =
+    ResponseEntity.ok(searchDream.execute(title, page, pageSize))
 
   @PostMapping("/")
   @ApiOperation(value = "Create a new Dream")
