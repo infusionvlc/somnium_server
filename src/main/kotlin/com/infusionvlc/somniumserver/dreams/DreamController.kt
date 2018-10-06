@@ -81,6 +81,18 @@ class DreamController(
       )
   }
 
+  @GetMapping("/search")
+  @ApiOperation(value = "Search dream by title")
+  @ApiResponses(
+    ApiResponse(code = 200, response = Dream::class, responseContainer = "List", message = "Dreams result")
+  )
+  fun searchDream(
+    @RequestParam("page") page: Int,
+    @RequestParam("page_size") pageSize: Int,
+    @RequestParam("title") title: String
+  ): ResponseEntity<List<Dream>> =
+    ResponseEntity.ok(searchDream.execute(title, page, pageSize))
+
   @PostMapping("/")
   @ApiOperation(value = "Create a new Dream")
   @ApiResponses(
@@ -124,18 +136,6 @@ class DreamController(
         { ResponseEntity.ok(it) }
       )
   }
-
-  @GetMapping("/search")
-  @ApiOperation(value = "Search dream by title")
-  @ApiResponses(
-    ApiResponse(code = 200, response = Dream::class, responseContainer = "List", message = "Dreams result")
-  )
-  fun searchDream(
-    @RequestParam("page") page: Int,
-    @RequestParam("page_size") pageSize: Int,
-    @RequestParam("title") title: String
-  ): ResponseEntity<List<Dream>> =
-    ResponseEntity.ok(searchDream.execute(title, page, pageSize))
 
   @DeleteMapping("/{id}")
   @ApiOperation(value = "Delete an existing Dream")
