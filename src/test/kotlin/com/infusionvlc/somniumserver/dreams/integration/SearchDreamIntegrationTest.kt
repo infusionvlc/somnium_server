@@ -26,14 +26,12 @@ import org.springframework.test.context.junit4.SpringRunner
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SearchDreamIntegrationTest : WordSpec() {
 
-  companion object {
-    private lateinit var FREDDY_DREAM: Dream
-    private lateinit var NOT_PASSING_TESTS_DREAM: Dream
-    private lateinit var NUN_DREAM: Dream
+  private lateinit var FREDDY_DREAM: Dream
+  private lateinit var NOT_PASSING_TESTS_DREAM: Dream
+  private lateinit var NUN_DREAM: Dream
 
-    private fun createDream(title: String, user: UserEntity): DreamEntity =
-      DreamEntity(0, title, "He was in my dreams", 3, 23, 3, user)
-  }
+  private fun createDream(title: String, user: UserEntity): DreamEntity =
+    DreamEntity(0, title, "He was in my dreams", 3, 23, 3, true, user)
 
   private val restTemplate = TestRestTemplate().restTemplate
 
@@ -50,7 +48,7 @@ class SearchDreamIntegrationTest : WordSpec() {
   }
 
   init {
-    "search dream" should {
+    "Search dream" should {
       givenDreams()
 
       "Get Freddy Krueger dream if contains \"fre\" words" {

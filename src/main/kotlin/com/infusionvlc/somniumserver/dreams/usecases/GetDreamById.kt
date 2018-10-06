@@ -17,7 +17,7 @@ class GetDreamById(private val dao: DreamRepository) {
     .map { it.toDomain() }
     .toEither { DreamDetailErrors.DreamNotFound(dreamId) }
     .flatMap {
-      if (!it.isPublic && !isUserCreatorOfDream(userId, it)) DreamDetailErrors.DreamIsNotPublic.left()
+      if (!it.public && !isUserCreatorOfDream(userId, it)) DreamDetailErrors.DreamIsNotPublic.left()
       else it.right()
     }
 }

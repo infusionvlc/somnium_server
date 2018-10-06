@@ -22,7 +22,7 @@ data class DreamEntity(
   val creationDate: Long = 0,
   val updateDate: Long = 0,
   val dreamtDate: Long = 0,
-  val isPublic: Boolean = true,
+  val public: Boolean = true,
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "user_id")
@@ -37,9 +37,9 @@ fun DreamEntity.toDomain(): Dream = Dream(
   creationDate = this.creationDate,
   updateDate = this.updateDate,
   dreamtDate = this.dreamtDate,
-  isPublic = this.isPublic
+  public = this.public
 )
 
 fun Dream.toEntity(user: User): DreamEntity = DreamEntity(
-  id, title, description, creationDate, updateDate, dreamtDate, isPublic, user.toEntity()
+  id, title, description, creationDate, updateDate, dreamtDate, public, user.toEntity()
 )

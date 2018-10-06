@@ -4,7 +4,7 @@ data class DreamRequest(
   val title: String = "",
   val description: String = "",
   val dreamtDate: Long = 0,
-  val isPublic: Boolean = true
+  val public: Boolean = true
 )
 
 fun DreamRequest.toDomain(userId: Long): Dream = Dream(
@@ -15,5 +15,5 @@ fun DreamRequest.toDomain(userId: Long): Dream = Dream(
   creationDate = System.currentTimeMillis(),
   updateDate = System.currentTimeMillis(),
   dreamtDate = this.dreamtDate,
-  isPublic = this.isPublic
+  public = this.public
 )
