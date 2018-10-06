@@ -2,10 +2,12 @@ package com.infusionvlc.somniumserver.dreams
 
 import com.infusionvlc.somniumserver.dreams.models.Dream
 import com.infusionvlc.somniumserver.dreams.models.DreamCreationErrors
+import com.infusionvlc.somniumserver.dreams.models.DreamEditionErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRemovalErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRequest
 import com.infusionvlc.somniumserver.dreams.usecases.CreateDream
 import com.infusionvlc.somniumserver.dreams.usecases.DeleteDream
+import com.infusionvlc.somniumserver.dreams.usecases.EditDream
 import com.infusionvlc.somniumserver.dreams.usecases.GetAllDreams
 import com.infusionvlc.somniumserver.users.security.models.SecurityUser
 import io.swagger.annotations.Api
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -31,6 +34,7 @@ import springfox.documentation.annotations.ApiIgnore
 class DreamController(
   private val getAllDreams: GetAllDreams,
   private val createDream: CreateDream,
+  private val editDream: EditDream,
   private val deleteDream: DeleteDream
 ) {
 
@@ -48,7 +52,7 @@ class DreamController(
   @PostMapping("/")
   @ApiOperation(value = "Create a new Dream")
   @ApiResponses(
-    ApiResponse(code = 201, response = Dream::class, message = ""),
+    ApiResponse(code = 201, response = Dream::class, message = "Dream is created"),
     ApiResponse(code = 400, message = "Validation error message")
   )
   fun createDream(
@@ -58,17 +62,34 @@ class DreamController(
     val requestUser = authentication.principal as SecurityUser
     return createDream.execute(dreamRequest, requestUser.id)
       .fold(
+        this::handleDreamCreationError
+      ) { ResponseEntity(it, HttpStatus.CREATED) }
+  }
+
+  @PutMapping("/{id}")
+  @ApiOperation(value = "Edit an existing Dream")
+  @ApiResponses(
+    ApiResponse(code = 200, response = Dream::class, message = "Dream is updated"),
+    ApiResponse(code = 403, message = "User is not creator of Dream"),
+    ApiResponse(code = 404, message = "Dream was not found"),
+    ApiResponse(code = 400, message = "Validation error message")
+  )
+  fun editDream(
+    @RequestBody dreamRequest: DreamRequest,
+    @PathVariable id: Long,
+    @ApiIgnore authentication: Authentication
+  ): ResponseEntity<*> {
+    val requestUser = authentication.principal as SecurityUser
+    return editDream.execute(id, dreamRequest, requestUser.id)
+      .fold(
         {
-          ResponseEntity(when (it) {
-            is DreamCreationErrors.TitleTooLong -> "Title is too long"
-            is DreamCreationErrors.DescriptionTooLong -> "Description is too long"
-            is DreamCreationErrors.TitleMissing -> "Title is missing"
-            is DreamCreationErrors.DescriptionMissing -> "Description is missing"
-            is DreamCreationErrors.InvalidDate -> "Invalid dreamt date"
-            is DreamCreationErrors.CreatorNotFound -> "User with id ${it.userId} was not found"
-          }, HttpStatus.BAD_REQUEST)
+          when (it) {
+            is DreamEditionErrors.UserIsNotCreator -> handleUserIsNotCreatorOfDreamError()
+            is DreamEditionErrors.DreamNotFound -> handleDreamNotFound(it.id)
+            is DreamCreationErrors -> handleDreamCreationError(it)
+          }
         },
-        { ResponseEntity(it, HttpStatus.CREATED) }
+        { ResponseEntity.ok(it) }
       )
   }
 
@@ -88,13 +109,27 @@ class DreamController(
       .fold(
         {
           when (it) {
-            is DreamRemovalErrors.UserIsNotCreator ->
-              ResponseEntity("User is not creator of dream", HttpStatus.FORBIDDEN)
-            is DreamRemovalErrors.DreamNotFound ->
-              ResponseEntity("Dream with id ${it.id} was not found", HttpStatus.NOT_FOUND)
+            is DreamRemovalErrors.UserIsNotCreator -> handleUserIsNotCreatorOfDreamError()
+            is DreamRemovalErrors.DreamNotFound -> handleDreamNotFound(it.id)
           }
         },
         { ResponseEntity.ok().build<Unit>() }
       )
   }
+
+  private fun handleUserIsNotCreatorOfDreamError(): ResponseEntity<String> =
+    ResponseEntity("User is not creator of dream", HttpStatus.FORBIDDEN)
+
+  private fun handleDreamNotFound(dreamId: Long): ResponseEntity<String> =
+    ResponseEntity("Dream with id $dreamId was not found", HttpStatus.NOT_FOUND)
+
+  private fun handleDreamCreationError(error: DreamCreationErrors): ResponseEntity<String> =
+    ResponseEntity(when (error) {
+      is DreamCreationErrors.TitleTooLong -> "Title is too long"
+      is DreamCreationErrors.DescriptionTooLong -> "Description is too long"
+      is DreamCreationErrors.TitleMissing -> "Title is missing"
+      is DreamCreationErrors.DescriptionMissing -> "Description is missing"
+      is DreamCreationErrors.InvalidDate -> "Invalid dreamt date"
+      is DreamCreationErrors.CreatorNotFound -> "User with id ${error.userId} was not found"
+    }, HttpStatus.BAD_REQUEST)
 }

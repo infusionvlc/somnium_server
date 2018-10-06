@@ -1,6 +1,11 @@
 package com.infusionvlc.somniumserver.dreams.models
 
-sealed class DreamCreationErrors {
+sealed class DreamEditionErrors {
+  object UserIsNotCreator : DreamEditionErrors()
+  class DreamNotFound(val id: Long) : DreamEditionErrors()
+}
+
+sealed class DreamCreationErrors : DreamEditionErrors() {
   object TitleTooLong : DreamCreationErrors()
   object DescriptionTooLong : DreamCreationErrors()
   object TitleMissing : DreamCreationErrors()
