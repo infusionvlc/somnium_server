@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component
 class GetAllDreams(
   private val dao: DreamRepository
 ) {
-  fun execute(page: Int, pageSize: Int): List<Dream> =
-    dao.findAll(PageRequest.of(page, pageSize))
+  fun execute(userId: Long, page: Int, pageSize: Int): List<Dream> =
+    dao.findAllVisibleByUser(userId, PageRequest.of(page, pageSize))
       .map { it.toDomain() }
       .toList()
 }

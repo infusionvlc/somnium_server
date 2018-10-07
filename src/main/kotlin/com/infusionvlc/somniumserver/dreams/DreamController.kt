@@ -2,6 +2,7 @@ package com.infusionvlc.somniumserver.dreams
 
 import com.infusionvlc.somniumserver.dreams.models.Dream
 import com.infusionvlc.somniumserver.dreams.models.DreamCreationErrors
+import com.infusionvlc.somniumserver.dreams.models.DreamDetailErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamEditionErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRemovalErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRequest
@@ -9,6 +10,7 @@ import com.infusionvlc.somniumserver.dreams.usecases.CreateDream
 import com.infusionvlc.somniumserver.dreams.usecases.DeleteDream
 import com.infusionvlc.somniumserver.dreams.usecases.EditDream
 import com.infusionvlc.somniumserver.dreams.usecases.GetAllDreams
+import com.infusionvlc.somniumserver.dreams.usecases.GetDreamById
 import com.infusionvlc.somniumserver.dreams.usecases.SearchDream
 import com.infusionvlc.somniumserver.users.security.models.SecurityUser
 import io.swagger.annotations.Api
@@ -34,6 +36,7 @@ import springfox.documentation.annotations.ApiIgnore
 @Api(value = "Dreams", description = "Endpoints for Dreams resources")
 class DreamController(
   private val getAllDreams: GetAllDreams,
+  private val getDreamById: GetDreamById,
   private val createDream: CreateDream,
   private val editDream: EditDream,
   private val deleteDream: DeleteDream,
@@ -47,9 +50,36 @@ class DreamController(
   )
   fun getAll(
     @RequestParam("page") page: Int,
-    @RequestParam("page_size") pageSize: Int
-  ): ResponseEntity<List<Dream>> =
-    ResponseEntity.ok(getAllDreams.execute(page, pageSize))
+    @RequestParam("page_size") pageSize: Int,
+    @ApiIgnore authentication: Authentication
+  ): ResponseEntity<List<Dream>> {
+    val requestUser = authentication.principal as SecurityUser
+    return ResponseEntity.ok(getAllDreams.execute(requestUser.id, page, pageSize))
+  }
+
+  @GetMapping("/{id}")
+  @ApiOperation(value = "Get details of a Dream")
+  @ApiResponses(
+    ApiResponse(code = 200, response = Dream::class, message = "Detailed Dream"),
+    ApiResponse(code = 404, message = "Dream is not found"),
+    ApiResponse(code = 403, message = "Dream is not public")
+  )
+  fun getDreamDetails(
+    @PathVariable("id") dreamId: Long,
+    @ApiIgnore authentication: Authentication
+  ): ResponseEntity<*> {
+    val requestUser = authentication.principal as SecurityUser
+    return getDreamById.execute(dreamId, requestUser.id)
+      .fold(
+        {
+          when (it) {
+            is DreamDetailErrors.DreamIsNotPublic -> handleDreamIsNotPublic()
+            is DreamDetailErrors.DreamNotFound -> handleDreamNotFound(it.id)
+          }
+        },
+        { ResponseEntity.ok(it) }
+      )
+  }
 
   @GetMapping("/search")
   @ApiOperation(value = "Search dream by title")
@@ -130,6 +160,9 @@ class DreamController(
         { ResponseEntity.ok().build<Unit>() }
       )
   }
+
+  private fun handleDreamIsNotPublic(): ResponseEntity<String> =
+    ResponseEntity("Dream is not public", HttpStatus.FORBIDDEN)
 
   private fun handleUserIsNotCreatorOfDreamError(): ResponseEntity<String> =
     ResponseEntity("User is not creator of dream", HttpStatus.FORBIDDEN)
