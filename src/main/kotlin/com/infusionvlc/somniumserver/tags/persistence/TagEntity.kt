@@ -2,9 +2,6 @@ package com.infusionvlc.somniumserver.tags.persistence
 
 import com.infusionvlc.somniumserver.dreams.persistence.DreamEntity
 import com.infusionvlc.somniumserver.tags.models.Tag
-import com.infusionvlc.somniumserver.dreams.models.Dream
-import com.infusionvlc.somniumserver.dreams.persistence.toEntity
-import com.infusionvlc.somniumserver.users.models.User
 import javax.persistence.*
 
 @Entity
@@ -29,6 +26,4 @@ fun TagEntity.toDomain(): Tag = Tag(
   updateDate = this.updateDate
 )
 
-fun Tag.toEntity(user: User, dreams: List<Dream>): TagEntity = TagEntity(
-  id, title, creationDate, updateDate
-)
+fun Tag.toEntity(): TagEntity = TagEntity(id, title, creationDate, updateDate)
