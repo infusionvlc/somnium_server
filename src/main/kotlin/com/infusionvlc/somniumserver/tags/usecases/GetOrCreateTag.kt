@@ -16,15 +16,16 @@ class GetOrCreateTag(
   private val dao: TagRepository,
   private val findTagByTitle: FindTagByTitle
 ) {
-  fun execute(title: String): Either<TagCreationErrors, Tag> =
-    findTagByTitle.execute(title)
-      .toEither {
-        validate(title)
-          .flatMap { tag ->
-            dao.save(tag.toEntity()).toDomain().right()
-          }
-      }
+  fun execute(title: String): Either<TagCreationErrors, Tag> {
+    val tagOption = findTagByTitle.execute(title)
 
+    return if (tagOption.isEmpty()) {
+      validate(title)
+        .map { dao.save(it.toEntity()).toDomain() }
+    } else {
+      tagOption.get().right()
+    }
+  }
 
   private fun validate(title: String): Either<TagCreationErrors, Tag> = when {
     title.length > 20 -> TagCreationErrors.TitleTooLong.left()
