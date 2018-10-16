@@ -7,6 +7,7 @@ import com.infusionvlc.somniumserver.dreams.models.DreamRequest
 import com.infusionvlc.somniumserver.dreams.persistence.DreamEntity
 import com.infusionvlc.somniumserver.dreams.persistence.DreamRepository
 import com.infusionvlc.somniumserver.mock
+import com.infusionvlc.somniumserver.tags.usecases.GetOrCreateTag
 import com.infusionvlc.somniumserver.users.models.User
 import com.infusionvlc.somniumserver.users.usecases.FindUserById
 import io.kotlintest.assertions.arrow.either.shouldBeLeft
@@ -21,7 +22,8 @@ class CreateDreamTest : StringSpec() {
 
   private val mockDao = mock<DreamRepository>()
   private val mockFindUser = mock<FindUserById>()
-  private val createDream = CreateDream(mockDao, mockFindUser)
+  private val mockCreateTag = mock<GetOrCreateTag>()
+  private val createDream = CreateDream(mockDao, mockFindUser, mockCreateTag)
 
   private fun findUserMockWillReturnUser() {
     `when`(mockFindUser.execute(anyLong())).thenReturn(Option.just(User(0, "test", "test")))
