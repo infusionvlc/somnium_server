@@ -1,7 +1,6 @@
 package com.infusionvlc.somniumserver.tags.usecases
 
 import arrow.core.Either
-import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
 import com.infusionvlc.somniumserver.tags.models.Tag

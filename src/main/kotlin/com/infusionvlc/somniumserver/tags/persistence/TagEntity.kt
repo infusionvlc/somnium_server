@@ -2,7 +2,15 @@ package com.infusionvlc.somniumserver.tags.persistence
 
 import com.infusionvlc.somniumserver.dreams.persistence.DreamEntity
 import com.infusionvlc.somniumserver.tags.models.Tag
-import javax.persistence.*
+import javax.persistence.Entity
+import javax.persistence.FetchType
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.JoinTable
+import javax.persistence.ManyToMany
+import javax.persistence.Table
 
 @Entity
 @Table(name = "Tags")
