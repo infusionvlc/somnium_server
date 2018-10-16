@@ -30,7 +30,7 @@ class CreateDream(
           .toEither { DreamCreationErrors.CreatorNotFound(userId) }
           .map { user ->
             dreamRequest.tags.forEach { tag ->
-              createTag.execute(tag)
+              createTag.execute(tag).map { dream.tags.add(it) }
             }
             dao.save(dream.toEntity(user))
           }

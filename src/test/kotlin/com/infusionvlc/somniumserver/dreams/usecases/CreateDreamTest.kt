@@ -18,6 +18,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.Mockito.`when`
 
+// TODO -> Test that the tags are added
 class CreateDreamTest : StringSpec() {
 
   private val mockDao = mock<DreamRepository>()

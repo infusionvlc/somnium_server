@@ -1,7 +1,6 @@
 package com.infusionvlc.somniumserver.dreams.usecases
 
 import arrow.core.Either
-import arrow.core.andThen
 import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
@@ -14,13 +13,16 @@ import com.infusionvlc.somniumserver.dreams.models.DreamRequest
 import com.infusionvlc.somniumserver.dreams.persistence.DreamRepository
 import com.infusionvlc.somniumserver.dreams.persistence.toDomain
 import com.infusionvlc.somniumserver.dreams.persistence.toEntity
+import com.infusionvlc.somniumserver.tags.models.Tag
+import com.infusionvlc.somniumserver.tags.usecases.GetOrCreateTag
 import com.infusionvlc.somniumserver.users.usecases.FindUserById
 import org.springframework.stereotype.Component
 
 @Component
 class EditDream(
   private val dao: DreamRepository,
-  private val findUserById: FindUserById
+  private val findUserById: FindUserById,
+  private val getOrCreateTag: GetOrCreateTag
 ) {
   fun execute(
     dreamId: Long,
@@ -57,6 +59,7 @@ class EditDream(
         it.copy(
           title = dreamRequest.title,
           description = dreamRequest.description,
+          tags = getOrCreateTags(dreamRequest.tags),
           dreamtDate = dreamRequest.dreamtDate,
           updateDate = currentTime
         )
@@ -66,6 +69,15 @@ class EditDream(
   private fun validate(currentTime: Long) = { either: Either<DreamEditionErrors, Dream> ->
     either.flatMap { validateDream(it, currentTime) }
   }
+
+  private fun getOrCreateTags(tagsList: List<String>): MutableList<Tag> {
+    val tags = mutableListOf<Tag>()
+    tagsList.forEach { tag ->
+      getOrCreateTag.execute(tag).map { tags.add(it) }
+    }
+    return tags
+  }
+
 
   private fun storeDream(userId: Long) = { either: Either<DreamEditionErrors, Dream> ->
     either.flatMap { dream ->
