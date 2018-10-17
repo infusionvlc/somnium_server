@@ -6,6 +6,7 @@ import com.infusionvlc.somniumserver.dreams.models.DreamDetailErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamEditionErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRemovalErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRequest
+import com.infusionvlc.somniumserver.dreams.models.TagCreationErrors
 import com.infusionvlc.somniumserver.dreams.usecases.CreateDream
 import com.infusionvlc.somniumserver.dreams.usecases.DeleteDream
 import com.infusionvlc.somniumserver.dreams.usecases.EditDream
@@ -178,5 +179,8 @@ class DreamController(
       is DreamCreationErrors.DescriptionMissing -> "Description is missing"
       is DreamCreationErrors.InvalidDate -> "Invalid dreamt date"
       is DreamCreationErrors.CreatorNotFound -> "User with id ${error.userId} was not found"
+      is TagCreationErrors.TitleMissing -> "Tag title is missing"
+      is TagCreationErrors.TitleTooLong -> "Tag title cannot be longer than 20 characters"
+      is TagCreationErrors.CreationError -> "Something failed while creating tag"
     }, HttpStatus.BAD_REQUEST)
 }

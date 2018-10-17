@@ -75,6 +75,9 @@ dependencies {
 
   implementation "io.arrow-kt:arrow-core:$arrowVersion"
   implementation "io.arrow-kt:arrow-syntax:$arrowVersion"
+  implementation "io.arrow-kt:arrow-data:$arrowVersion"
+  implementation "io.arrow-kt:arrow-instances-core:$arrowVersion"
+  implementation "io.arrow-kt:arrow-instances-data:$arrowVersion"
 
   implementation "io.springfox:springfox-swagger2:$swaggerVersion"
   implementation "io.springfox:springfox-swagger-ui:$swaggerVersion"

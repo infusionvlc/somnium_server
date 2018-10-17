@@ -8,7 +8,7 @@ data class Dream(
   val description: String,
   val userId: Long,
   val public: Boolean,
-  val tags: MutableList<Tag> = mutableListOf(),
+  val tags: List<Tag> = emptyList(),
   val creationDate: Long,
   val updateDate: Long,
   val dreamtDate: Long

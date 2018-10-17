@@ -13,3 +13,9 @@ sealed class DreamCreationErrors : DreamEditionErrors() {
   object InvalidDate : DreamCreationErrors()
   class CreatorNotFound(val userId: Long) : DreamCreationErrors()
 }
+
+sealed class TagCreationErrors : DreamCreationErrors() {
+  object TitleMissing : TagCreationErrors()
+  object TitleTooLong : TagCreationErrors()
+  object CreationError : TagCreationErrors()
+}
