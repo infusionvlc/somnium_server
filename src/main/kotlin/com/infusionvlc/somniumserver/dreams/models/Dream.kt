@@ -1,12 +1,12 @@
 package com.infusionvlc.somniumserver.dreams.models
 
 data class Dream(
-  val id: Long,
-  val title: String,
-  val description: String,
-  val userId: Long,
-  val public: Boolean,
-  val creationDate: Long,
-  val updateDate: Long,
-  val dreamtDate: Long
+  val id: Long = 0,
+  val title: String = "",
+  val description: String = "",
+  val userId: Long = 0,
+  val public: Boolean = true,
+  val creationDate: Long = 0,
+  val updateDate: Long = 0,
+  val dreamtDate: Long = 0
 )

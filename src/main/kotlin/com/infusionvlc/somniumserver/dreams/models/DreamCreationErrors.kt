@@ -3,6 +3,7 @@ package com.infusionvlc.somniumserver.dreams.models
 sealed class DreamEditionErrors {
   object UserIsNotCreator : DreamEditionErrors()
   class DreamNotFound(val id: Long) : DreamEditionErrors()
+  object PersistenceError : DreamEditionErrors()
 }
 
 sealed class DreamCreationErrors : DreamEditionErrors() {
@@ -12,4 +13,5 @@ sealed class DreamCreationErrors : DreamEditionErrors() {
   object DescriptionMissing : DreamCreationErrors()
   object InvalidDate : DreamCreationErrors()
   class CreatorNotFound(val userId: Long) : DreamCreationErrors()
+  object PersistenceError : DreamCreationErrors()
 }

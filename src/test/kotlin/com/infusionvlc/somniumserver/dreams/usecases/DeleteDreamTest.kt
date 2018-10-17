@@ -1,21 +1,28 @@
 package com.infusionvlc.somniumserver.dreams.usecases
 
 import arrow.core.Either
+import arrow.core.Option
+import arrow.core.Try
+import com.infusionvlc.somniumserver.dreams.models.Dream
 import com.infusionvlc.somniumserver.dreams.models.DreamRemovalErrors
-import com.infusionvlc.somniumserver.dreams.persistence.DreamEntity
-import com.infusionvlc.somniumserver.dreams.persistence.DreamRepository
+import com.infusionvlc.somniumserver.dreams.persistence.DreamDAO
 import com.infusionvlc.somniumserver.mock
+import io.kotlintest.Description
 import io.kotlintest.assertions.arrow.either.shouldBeLeft
 import io.kotlintest.assertions.arrow.either.shouldBeRight
 import io.kotlintest.matchers.types.shouldBeTypeOf
 import io.kotlintest.specs.StringSpec
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.`when`
-import java.util.Optional
 
 class DeleteDreamTest : StringSpec() {
-  private val mockDao = mock<DreamRepository>()
+  private val mockDao = mock<DreamDAO>()
   private val deleteDream = DeleteDream(mockDao)
+
+  override fun beforeTest(description: Description) {
+    super.beforeTest(description)
+    mockDaoWillSuccessAtDeletion()
+  }
 
   init {
 
@@ -46,10 +53,14 @@ class DeleteDreamTest : StringSpec() {
   }
 
   private fun mockDaoWontFindDream() {
-    `when`(mockDao.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.empty())
+    `when`(mockDao.findById(ArgumentMatchers.anyLong())).thenReturn(Option.empty())
   }
 
   private fun mockDaoWillFindDream() {
-    `when`(mockDao.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(DreamEntity()))
+    `when`(mockDao.findById(ArgumentMatchers.anyLong())).thenReturn(Option.just(Dream()))
+  }
+
+  private fun mockDaoWillSuccessAtDeletion() {
+    `when`(mockDao.deleteDream(ArgumentMatchers.anyLong())).thenReturn(Try.just(Unit))
   }
 }
