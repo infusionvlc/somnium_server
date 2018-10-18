@@ -1,7 +1,6 @@
 package com.infusionvlc.somniumserver.dreams.usecases
 
 import arrow.core.Either
-import arrow.core.ForEither
 import arrow.core.applicative
 import arrow.core.fix
 import arrow.core.flatMap

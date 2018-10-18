@@ -1,9 +1,9 @@
 package com.infusionvlc.somniumserver.dreams.usecases
 
 import arrow.core.Option
+import com.infusionvlc.somniumserver.dreams.models.TagCreationErrors
 import com.infusionvlc.somniumserver.mock
 import com.infusionvlc.somniumserver.tags.models.Tag
-import com.infusionvlc.somniumserver.tags.models.TagCreationErrors
 import com.infusionvlc.somniumserver.tags.persistence.TagEntity
 import com.infusionvlc.somniumserver.tags.persistence.TagRepository
 import com.infusionvlc.somniumserver.tags.usecases.FindTagByTitle

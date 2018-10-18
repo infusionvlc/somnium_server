@@ -78,7 +78,6 @@ class EditDream(
     return tags
   }
 
-
   private fun storeDream(userId: Long) = { either: Either<DreamEditionErrors, Dream> ->
     either.flatMap { dream ->
       findUserById.execute(userId)

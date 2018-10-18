@@ -1,27 +1,17 @@
 package com.infusionvlc.somniumserver.dreams.usecases
 
 import arrow.core.Either
-import arrow.core.Option
 import com.infusionvlc.somniumserver.dreams.models.DreamEditionErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRequest
 import com.infusionvlc.somniumserver.dreams.persistence.DreamEntity
 import com.infusionvlc.somniumserver.dreams.persistence.DreamRepository
 import com.infusionvlc.somniumserver.mock
-import com.infusionvlc.somniumserver.tags.models.Tag
-import com.infusionvlc.somniumserver.tags.persistence.TagEntity
-import com.infusionvlc.somniumserver.tags.persistence.TagRepository
-import com.infusionvlc.somniumserver.tags.usecases.FindTagByTitle
 import com.infusionvlc.somniumserver.tags.usecases.GetOrCreateTag
-import com.infusionvlc.somniumserver.users.models.User
-import com.infusionvlc.somniumserver.users.persistence.toEntity
 import com.infusionvlc.somniumserver.users.usecases.FindUserById
 import io.kotlintest.assertions.arrow.either.shouldBeLeft
-import io.kotlintest.assertions.arrow.either.shouldBeRight
 import io.kotlintest.matchers.types.shouldBeTypeOf
-import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito
 import org.mockito.Mockito.`when`
 import java.util.Optional
 
