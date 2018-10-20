@@ -7,11 +7,11 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
 
 @Component
-class GetAllDreams(
+class SearchDream(
   private val dao: DreamRepository
 ) {
-  fun execute(userId: Long, page: Int, pageSize: Int): List<Dream> =
-    dao.findAllVisibleByUser(userId, PageRequest.of(page, pageSize))
+  fun execute(title: String, page: Int, pageSize: Int): List<Dream> =
+    dao.findByTitleContainingIgnoreCase(title, PageRequest.of(page, pageSize))
       .map { it.toDomain() }
       .toList()
 }

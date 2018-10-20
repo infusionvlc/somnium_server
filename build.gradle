@@ -3,6 +3,8 @@ buildscript {
     kotlinVersion = '1.2.51'
     springBootVersion = '2.0.5.RELEASE'
     kotlintestVersion = "3.1.10"
+    arrowVersion = "0.7.3"
+    swaggerVersion = "2.9.2"
   }
   repositories {
     mavenCentral()
@@ -63,7 +65,7 @@ dependencies {
   implementation("org.jetbrains.kotlin:kotlin-reflect")
   runtimeOnly('org.springframework.boot:spring-boot-devtools')
   runtimeOnly('com.h2database:h2')
-  
+
   testImplementation('org.springframework.boot:spring-boot-starter-test')
   testImplementation('org.springframework.security:spring-security-test')
   testImplementation "io.kotlintest:kotlintest-runner-junit5:$kotlintestVersion"
@@ -71,10 +73,14 @@ dependencies {
 
   ktlint "com.github.shyiko:ktlint:0.20.0"
 
-  implementation "io.arrow-kt:arrow-core:0.7.3"
+  implementation "io.arrow-kt:arrow-core:$arrowVersion"
+  implementation "io.arrow-kt:arrow-syntax:$arrowVersion"
+  implementation "io.arrow-kt:arrow-data:$arrowVersion"
+  implementation "io.arrow-kt:arrow-instances-core:$arrowVersion"
+  implementation "io.arrow-kt:arrow-instances-data:$arrowVersion"
 
-  implementation "io.springfox:springfox-swagger2:2.9.2"
-  implementation "io.springfox:springfox-swagger-ui:2.9.2"
+  implementation "io.springfox:springfox-swagger2:$swaggerVersion"
+  implementation "io.springfox:springfox-swagger-ui:$swaggerVersion"
 }
 
 task ktlint(type: JavaExec, group: "verification") {

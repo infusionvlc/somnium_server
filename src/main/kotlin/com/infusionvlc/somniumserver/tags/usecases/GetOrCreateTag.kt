@@ -1,11 +1,10 @@
 package com.infusionvlc.somniumserver.tags.usecases
 
 import arrow.core.Either
-import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
+import com.infusionvlc.somniumserver.dreams.models.TagCreationErrors
 import com.infusionvlc.somniumserver.tags.models.Tag
-import com.infusionvlc.somniumserver.tags.models.TagCreationErrors
 import com.infusionvlc.somniumserver.tags.persistence.TagRepository
 import com.infusionvlc.somniumserver.tags.persistence.toDomain
 import com.infusionvlc.somniumserver.tags.persistence.toEntity
