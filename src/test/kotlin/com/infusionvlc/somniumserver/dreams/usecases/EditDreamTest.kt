@@ -2,7 +2,7 @@ package com.infusionvlc.somniumserver.dreams.usecases
 
 import arrow.core.Either
 import arrow.core.Option
-import com.infusionvlc.somniumserver.dreams.models.Dream
+import com.infusionvlc.somniumserver.dreams.fakeDream
 import com.infusionvlc.somniumserver.dreams.models.DreamEditionErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRequest
 import com.infusionvlc.somniumserver.dreams.persistence.DreamDAO
@@ -41,7 +41,7 @@ class EditDreamTest : StringSpec() {
   }
 
   private fun mockWillFindDream() {
-    `when`(mockDao.findById(ArgumentMatchers.anyLong())).thenReturn(Option.just(Dream()))
+    `when`(mockDao.findById(ArgumentMatchers.anyLong())).thenReturn(Option.just(fakeDream()))
   }
 
   private fun mockWontFindDream() {

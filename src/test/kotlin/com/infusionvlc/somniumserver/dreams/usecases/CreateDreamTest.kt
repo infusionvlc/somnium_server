@@ -4,7 +4,7 @@ import arrow.core.Either
 import arrow.core.Option
 import arrow.core.Try
 import com.infusionvlc.somniumserver.AnyMocker
-import com.infusionvlc.somniumserver.dreams.models.Dream
+import com.infusionvlc.somniumserver.dreams.fakeDream
 import com.infusionvlc.somniumserver.dreams.models.DreamCreationErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRequest
 import com.infusionvlc.somniumserver.dreams.models.toDomain
@@ -99,7 +99,7 @@ class CreateDreamTest : StringSpec(), AnyMocker {
     }
 
     "If everything goes okay a dream should be returned" {
-      `when`(mockDao.saveDream(any(), any())).thenReturn(Try.just(Dream()))
+      `when`(mockDao.saveDream(any(), any())).thenReturn(Try.just(fakeDream()))
       findUserMockWillReturnUser()
 
       val dreamRequest = DreamRequest("Test", "Description", 1000)

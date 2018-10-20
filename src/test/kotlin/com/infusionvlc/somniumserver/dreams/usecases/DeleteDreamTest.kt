@@ -3,7 +3,7 @@ package com.infusionvlc.somniumserver.dreams.usecases
 import arrow.core.Either
 import arrow.core.Option
 import arrow.core.Try
-import com.infusionvlc.somniumserver.dreams.models.Dream
+import com.infusionvlc.somniumserver.dreams.fakeDream
 import com.infusionvlc.somniumserver.dreams.models.DreamRemovalErrors
 import com.infusionvlc.somniumserver.dreams.persistence.DreamDAO
 import com.infusionvlc.somniumserver.mock
@@ -57,7 +57,7 @@ class DeleteDreamTest : StringSpec() {
   }
 
   private fun mockDaoWillFindDream() {
-    `when`(mockDao.findById(ArgumentMatchers.anyLong())).thenReturn(Option.just(Dream()))
+    `when`(mockDao.findById(ArgumentMatchers.anyLong())).thenReturn(Option.just(fakeDream()))
   }
 
   private fun mockDaoWillSuccessAtDeletion() {
