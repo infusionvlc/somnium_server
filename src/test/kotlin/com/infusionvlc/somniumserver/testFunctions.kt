@@ -7,6 +7,15 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestTemplate
 
+interface AnyMocker {
+  fun <T> any(): T {
+    Mockito.any<T>()
+    return uninitialized()
+  }
+
+  fun <T> uninitialized(): T = null as T
+}
+
 inline fun <reified T> mock(): T = Mockito.mock(T::class.java)
 
 inline fun <reified T> RestTemplate.getForEntityAuthorized(url: String): ResponseEntity<T> {

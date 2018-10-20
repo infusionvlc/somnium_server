@@ -2,7 +2,7 @@ package com.infusionvlc.somniumserver.dreams.integration
 
 import com.infusionvlc.somniumserver.dreams.models.Dream
 import com.infusionvlc.somniumserver.dreams.persistence.DreamEntity
-import com.infusionvlc.somniumserver.dreams.persistence.DreamRepository
+import com.infusionvlc.somniumserver.dreams.persistence.DreamLocalDatasource
 import com.infusionvlc.somniumserver.dreams.persistence.toDomain
 import com.infusionvlc.somniumserver.getForEntityAuthorized
 import com.infusionvlc.somniumserver.users.persistence.UserEntity
@@ -39,7 +39,7 @@ class SearchDreamIntegrationTest : WordSpec() {
   var port: Int = 0
 
   @Autowired
-  lateinit var dreamDao: DreamRepository
+  lateinit var dreamDao: DreamLocalDatasource
   @Autowired
   lateinit var userDao: UserRepository
 

@@ -7,6 +7,7 @@ import com.infusionvlc.somniumserver.dreams.models.DreamEditionErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRemovalErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRequest
 import com.infusionvlc.somniumserver.dreams.models.TagCreationErrors
+import com.infusionvlc.somniumserver.dreams.models.toDomain
 import com.infusionvlc.somniumserver.dreams.usecases.CreateDream
 import com.infusionvlc.somniumserver.dreams.usecases.DeleteDream
 import com.infusionvlc.somniumserver.dreams.usecases.EditDream
@@ -105,7 +106,7 @@ class DreamController(
     @ApiIgnore authentication: Authentication
   ): ResponseEntity<*> {
     val requestUser = authentication.principal as SecurityUser
-    return createDream.execute(dreamRequest, requestUser.id)
+    return createDream.execute(dreamRequest.toDomain(requestUser.id), dreamRequest.tags, requestUser.id)
       .fold(
         this::handleDreamCreationError
       ) { ResponseEntity(it, HttpStatus.CREATED) }
@@ -132,6 +133,7 @@ class DreamController(
             is DreamEditionErrors.UserIsNotCreator -> handleUserIsNotCreatorOfDreamError()
             is DreamEditionErrors.DreamNotFound -> handleDreamNotFound(it.id)
             is DreamCreationErrors -> handleDreamCreationError(it)
+            is DreamEditionErrors.PersistenceError -> handlePersistenceError()
           }
         },
         { ResponseEntity.ok(it) }
@@ -156,6 +158,7 @@ class DreamController(
           when (it) {
             is DreamRemovalErrors.UserIsNotCreator -> handleUserIsNotCreatorOfDreamError()
             is DreamRemovalErrors.DreamNotFound -> handleDreamNotFound(it.id)
+            is DreamRemovalErrors.PersistenceError -> handlePersistenceError()
           }
         },
         { ResponseEntity.ok().build<Unit>() }
@@ -179,8 +182,14 @@ class DreamController(
       is DreamCreationErrors.DescriptionMissing -> "Description is missing"
       is DreamCreationErrors.InvalidDate -> "Invalid dreamt date"
       is DreamCreationErrors.CreatorNotFound -> "User with id ${error.userId} was not found"
+      is DreamCreationErrors.PersistenceError -> persistenceErrorString
       is TagCreationErrors.TitleMissing -> "Tag title is missing"
       is TagCreationErrors.TitleTooLong -> "Tag title cannot be longer than 20 characters"
       is TagCreationErrors.CreationError -> "Something failed while creating tag"
     }, HttpStatus.BAD_REQUEST)
+
+  private val persistenceErrorString = "Database operation failed"
+
+  private fun handlePersistenceError(): ResponseEntity<String> =
+    ResponseEntity(persistenceErrorString, HttpStatus.INTERNAL_SERVER_ERROR)
 }

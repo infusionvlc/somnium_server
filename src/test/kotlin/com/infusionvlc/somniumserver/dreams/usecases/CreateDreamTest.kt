@@ -2,10 +2,13 @@ package com.infusionvlc.somniumserver.dreams.usecases
 
 import arrow.core.Either
 import arrow.core.Option
+import arrow.core.Try
+import com.infusionvlc.somniumserver.AnyMocker
+import com.infusionvlc.somniumserver.dreams.fakeDream
 import com.infusionvlc.somniumserver.dreams.models.DreamCreationErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRequest
-import com.infusionvlc.somniumserver.dreams.persistence.DreamEntity
-import com.infusionvlc.somniumserver.dreams.persistence.DreamRepository
+import com.infusionvlc.somniumserver.dreams.models.toDomain
+import com.infusionvlc.somniumserver.dreams.persistence.DreamDAO
 import com.infusionvlc.somniumserver.mock
 import com.infusionvlc.somniumserver.tags.usecases.GetOrCreateTag
 import com.infusionvlc.somniumserver.users.models.User
@@ -14,14 +17,13 @@ import io.kotlintest.assertions.arrow.either.shouldBeLeft
 import io.kotlintest.assertions.arrow.either.shouldBeRight
 import io.kotlintest.matchers.types.shouldBeTypeOf
 import io.kotlintest.specs.StringSpec
-import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyLong
 import org.mockito.Mockito.`when`
 
 // TODO -> Test that the tags are added
-class CreateDreamTest : StringSpec() {
+class CreateDreamTest : StringSpec(), AnyMocker {
 
-  private val mockDao = mock<DreamRepository>()
+  private val mockDao = mock<DreamDAO>()
   private val mockFindUser = mock<FindUserById>()
   private val mockCreateTag = mock<GetOrCreateTag>()
   private val createDream = CreateDream(mockDao, mockFindUser, mockCreateTag)
@@ -40,8 +42,9 @@ class CreateDreamTest : StringSpec() {
       findUserMockWillReturnUser()
 
       val emptyTitleDreamRequest = DreamRequest(description = "Test", dreamtDate = 1000)
+        .toDomain(100)
 
-      createDream.execute(emptyTitleDreamRequest, 2000)
+      createDream.execute(emptyTitleDreamRequest, emptyList(), 2000)
         .shouldBeLeft(DreamCreationErrors.TitleMissing)
     }
 
@@ -49,8 +52,9 @@ class CreateDreamTest : StringSpec() {
       findUserMockWillReturnUser()
 
       val emptyDescriptionDreamRequest = DreamRequest(title = "Test", dreamtDate = 1000)
+        .toDomain(100)
 
-      createDream.execute(emptyDescriptionDreamRequest, 0, 2000)
+      createDream.execute(emptyDescriptionDreamRequest, emptyList(), 0, 2000)
         .shouldBeLeft(DreamCreationErrors.DescriptionMissing)
     }
 
@@ -59,8 +63,9 @@ class CreateDreamTest : StringSpec() {
 
       val longTitle = "x".repeat(41)
       val longTitleDreamRequest = DreamRequest(longTitle, "Test", 1000)
+        .toDomain(100)
 
-      createDream.execute(longTitleDreamRequest, 0, 2000)
+      createDream.execute(longTitleDreamRequest, emptyList(), 0, 2000)
         .shouldBeLeft(DreamCreationErrors.TitleTooLong)
     }
 
@@ -69,8 +74,9 @@ class CreateDreamTest : StringSpec() {
 
       val longDescription = "x".repeat(201)
       val longDescriptionDreamRequest = DreamRequest("Test", longDescription, 1000)
+        .toDomain(100)
 
-      createDream.execute(longDescriptionDreamRequest, 0, 2000)
+      createDream.execute(longDescriptionDreamRequest, emptyList(), 0, 2000)
         .shouldBeLeft(DreamCreationErrors.DescriptionTooLong)
     }
 
@@ -78,8 +84,9 @@ class CreateDreamTest : StringSpec() {
       findUserMockWillReturnUser()
 
       val futureDateDreamRequest = DreamRequest("Test", "Description", 2000)
+        .toDomain(100)
 
-      createDream.execute(futureDateDreamRequest, 0, 1000)
+      createDream.execute(futureDateDreamRequest, emptyList(), 0, 1000)
         .shouldBeLeft(DreamCreationErrors.InvalidDate)
     }
 
@@ -87,19 +94,21 @@ class CreateDreamTest : StringSpec() {
       findUserMockWillReturnEmpty()
 
       val dreamRequest = DreamRequest("Test", "Description", 1000)
+        .toDomain(100)
 
-      val result = createDream.execute(dreamRequest, 0, 2000)
+      val result = createDream.execute(dreamRequest, emptyList(), 0, 2000)
       result.shouldBeLeft()
       (result as Either.Left<DreamCreationErrors>).a.shouldBeTypeOf<DreamCreationErrors.CreatorNotFound>()
     }
 
     "If everything goes okay a dream should be returned" {
-      `when`(mockDao.save(any(DreamEntity::class.java))).thenReturn(DreamEntity())
+      `when`(mockDao.saveDream(any(), any())).thenReturn(Try.just(fakeDream()))
       findUserMockWillReturnUser()
 
       val dreamRequest = DreamRequest("Test", "Description", 1000)
+        .toDomain(100)
 
-      createDream.execute(dreamRequest, 0, 2000)
+      createDream.execute(dreamRequest, emptyList(), 0, 2000)
         .shouldBeRight()
     }
   }

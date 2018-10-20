@@ -4,7 +4,9 @@ import arrow.core.Either
 import arrow.core.applicative
 import arrow.core.fix
 import arrow.core.flatMap
+import arrow.core.left
 import arrow.core.monad
+import arrow.core.right
 import arrow.data.ListK
 import arrow.data.k
 import arrow.data.sequence
@@ -13,9 +15,7 @@ import com.infusionvlc.somniumserver.dreams.models.Dream
 import com.infusionvlc.somniumserver.dreams.models.DreamCreationErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRequest
 import com.infusionvlc.somniumserver.dreams.models.toDomain
-import com.infusionvlc.somniumserver.dreams.persistence.DreamRepository
-import com.infusionvlc.somniumserver.dreams.persistence.toDomain
-import com.infusionvlc.somniumserver.dreams.persistence.toEntity
+import com.infusionvlc.somniumserver.dreams.persistence.DreamDAO
 import com.infusionvlc.somniumserver.tags.models.Tag
 import com.infusionvlc.somniumserver.tags.usecases.GetOrCreateTag
 import com.infusionvlc.somniumserver.users.usecases.FindUserById
@@ -23,30 +23,31 @@ import org.springframework.stereotype.Component
 
 @Component
 class CreateDream(
-  private val dao: DreamRepository,
+  private val dao: DreamDAO,
   private val findUserById: FindUserById,
   private val createTag: GetOrCreateTag
 ) {
   fun execute(
-    dreamRequest: DreamRequest,
+    dream: Dream,
+    tags: List<String>,
     userId: Long,
     currentTime: Long = System.currentTimeMillis()
   ): Either<DreamCreationErrors, Dream> =
-    validateDream(dreamRequest.toDomain(userId), currentTime)
+    validateDream(dream, currentTime)
       .flatMap { dream ->
         findUserById.execute(userId)
           .toEither { DreamCreationErrors.CreatorNotFound(userId) }
           .flatMap { user ->
-            dreamRequest.tags
+            tags
               .map(createTag::execute).k()
               .sequence(Either.applicative()).fix()
-              .map { tags: ListK<Tag> ->
+              .flatMap { tags: ListK<Tag> ->
                 val dreamWithTags = dream.copy(tags = tags)
-                dao.save(dreamWithTags.toEntity(user))
+                dao.saveDream(dreamWithTags, user)
+                  .fold({ DreamCreationErrors.PersistenceError.left() }, { it.right() })
               }
           }
       }
-      .map { it.toDomain() }
 
   fun alternativeVersion(
     dreamRequest: DreamRequest,
@@ -58,7 +59,7 @@ class CreateDream(
     val user = findUserById.execute(userId).toEither { DreamCreationErrors.CreatorNotFound(userId) }.bind()
     val tags = dreamRequest.tags.map(createTag::execute).k().sequence(Either.applicative()).fix().bind()
     val dreamWithTags = validatedDream.copy(tags = tags)
-    val dreamEntity = dreamWithTags.toEntity(user)
-    dao.save(dreamEntity).toDomain()
+    dao.saveDream(dreamWithTags, user)
+      .fold({ DreamCreationErrors.PersistenceError.left() }, { it.right() }).bind()
   }.fix()
 }

@@ -1,10 +1,11 @@
 package com.infusionvlc.somniumserver.dreams.usecases
 
 import arrow.core.Either
+import arrow.core.Option
+import com.infusionvlc.somniumserver.dreams.fakeDream
 import com.infusionvlc.somniumserver.dreams.models.DreamEditionErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRequest
-import com.infusionvlc.somniumserver.dreams.persistence.DreamEntity
-import com.infusionvlc.somniumserver.dreams.persistence.DreamRepository
+import com.infusionvlc.somniumserver.dreams.persistence.DreamDAO
 import com.infusionvlc.somniumserver.mock
 import com.infusionvlc.somniumserver.tags.usecases.GetOrCreateTag
 import com.infusionvlc.somniumserver.users.usecases.FindUserById
@@ -13,11 +14,10 @@ import io.kotlintest.matchers.types.shouldBeTypeOf
 import io.kotlintest.specs.StringSpec
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.`when`
-import java.util.Optional
 
 class EditDreamTest : StringSpec() {
 
-  private val mockDao = mock<DreamRepository>()
+  private val mockDao = mock<DreamDAO>()
   private val mockFindUser = mock<FindUserById>()
   private val mockGetOrCreateTag = mock<GetOrCreateTag>()
   private val editDream = EditDream(mockDao, mockFindUser, mockGetOrCreateTag)
@@ -43,10 +43,10 @@ class EditDreamTest : StringSpec() {
   }
 
   private fun mockWillFindDream() {
-    `when`(mockDao.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.of(DreamEntity()))
+    `when`(mockDao.findById(ArgumentMatchers.anyLong())).thenReturn(Option.just(fakeDream()))
   }
 
   private fun mockWontFindDream() {
-    `when`(mockDao.findById(ArgumentMatchers.anyLong())).thenReturn(Optional.empty())
+    `when`(mockDao.findById(ArgumentMatchers.anyLong())).thenReturn(Option.empty())
   }
 }

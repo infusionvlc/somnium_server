@@ -5,14 +5,12 @@ import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
 import arrow.syntax.function.andThen
-import com.infusionvlc.somniumserver.base.toOption
+import com.infusionvlc.somniumserver.base.toEither
 import com.infusionvlc.somniumserver.dreams.models.Dream
 import com.infusionvlc.somniumserver.dreams.models.DreamCreationErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamEditionErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRequest
-import com.infusionvlc.somniumserver.dreams.persistence.DreamRepository
-import com.infusionvlc.somniumserver.dreams.persistence.toDomain
-import com.infusionvlc.somniumserver.dreams.persistence.toEntity
+import com.infusionvlc.somniumserver.dreams.persistence.DreamDAO
 import com.infusionvlc.somniumserver.tags.models.Tag
 import com.infusionvlc.somniumserver.tags.usecases.GetOrCreateTag
 import com.infusionvlc.somniumserver.users.usecases.FindUserById
@@ -20,7 +18,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class EditDream(
-  private val dao: DreamRepository,
+  private val dao: DreamDAO,
   private val findUserById: FindUserById,
   private val getOrCreateTag: GetOrCreateTag
 ) {
@@ -37,10 +35,8 @@ class EditDream(
       storeDream(userId)
     )()
 
-  private fun retrieveDreamFromPersistence(dao: DreamRepository, dreamId: Long) = {
+  private fun retrieveDreamFromPersistence(dao: DreamDAO, dreamId: Long) = {
     dao.findById(dreamId)
-      .toOption()
-      .map { it.toDomain() }
       .toEither { DreamEditionErrors.DreamNotFound(dreamId) }
   }
 
@@ -82,8 +78,8 @@ class EditDream(
     either.flatMap { dream ->
       findUserById.execute(userId)
         .toEither { DreamCreationErrors.CreatorNotFound(userId) }
-        .map { dao.save(dream.toEntity(it)) }
-        .map { it.toDomain() }
+        .map { dao.saveDream(dream, it) }
+        .flatMap { it.toEither { DreamCreationErrors.PersistenceError } }
     }
   }
 }
