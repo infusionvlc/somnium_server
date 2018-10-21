@@ -5,22 +5,26 @@ import arrow.core.Option
 import arrow.core.Try
 import com.infusionvlc.somniumserver.AnyMocker
 import com.infusionvlc.somniumserver.dreams.fakeDream
+import com.infusionvlc.somniumserver.dreams.fakeDreamWithTag
+import com.infusionvlc.somniumserver.dreams.models.Dream
 import com.infusionvlc.somniumserver.dreams.models.DreamCreationErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRequest
 import com.infusionvlc.somniumserver.dreams.models.toDomain
 import com.infusionvlc.somniumserver.dreams.persistence.DreamDAO
 import com.infusionvlc.somniumserver.mock
+import com.infusionvlc.somniumserver.tags.models.Tag
 import com.infusionvlc.somniumserver.tags.usecases.GetOrCreateTag
 import com.infusionvlc.somniumserver.users.models.User
 import com.infusionvlc.somniumserver.users.usecases.FindUserById
 import io.kotlintest.assertions.arrow.either.shouldBeLeft
 import io.kotlintest.assertions.arrow.either.shouldBeRight
 import io.kotlintest.matchers.types.shouldBeTypeOf
+import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 import org.mockito.ArgumentMatchers.anyLong
+import org.mockito.ArgumentMatchers.anyString
 import org.mockito.Mockito.`when`
 
-// TODO -> Test that the tags are added
 class CreateDreamTest : StringSpec(), AnyMocker {
 
   private val mockDao = mock<DreamDAO>()
@@ -34,6 +38,10 @@ class CreateDreamTest : StringSpec(), AnyMocker {
 
   private fun findUserMockWillReturnEmpty() {
     `when`(mockFindUser.execute(anyLong())).thenReturn(Option.empty())
+  }
+
+  private fun mockCreateTagWillReturnTag() {
+    `when`(mockCreateTag.execute(anyString())).thenReturn(Either.right(Tag(0, "tag", 1234567890, 1234567890)))
   }
 
   init {
@@ -110,6 +118,18 @@ class CreateDreamTest : StringSpec(), AnyMocker {
 
       createDream.execute(dreamRequest, emptyList(), 0, 2000)
         .shouldBeRight()
+    }
+
+    "If a tag is provided should create a dream with a Tag" {
+      `when`(mockDao.saveDream(any(), any())).thenReturn(Try.just(fakeDreamWithTag()))
+      findUserMockWillReturnUser()
+      mockCreateTagWillReturnTag()
+
+      val dreamRequest = DreamRequest("Test", "Description", 1000, listOf("Tag"))
+
+      val result = createDream.execute(dreamRequest.toDomain(100), dreamRequest.tags, 0, 2000)
+      result.shouldBeRight()
+      (result as Either.Right<Dream>).b.tags.size.shouldBe(1)
     }
   }
 }
