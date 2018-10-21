@@ -6,6 +6,7 @@ import com.infusionvlc.somniumserver.dreams.models.DreamDetailErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamEditionErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRemovalErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRequest
+import com.infusionvlc.somniumserver.dreams.models.TagCreationErrors
 import com.infusionvlc.somniumserver.dreams.models.toDomain
 import com.infusionvlc.somniumserver.dreams.usecases.CreateDream
 import com.infusionvlc.somniumserver.dreams.usecases.DeleteDream
@@ -105,7 +106,7 @@ class DreamController(
     @ApiIgnore authentication: Authentication
   ): ResponseEntity<*> {
     val requestUser = authentication.principal as SecurityUser
-    return createDream.execute(dreamRequest.toDomain(requestUser.id), requestUser.id)
+    return createDream.execute(dreamRequest.toDomain(requestUser.id), dreamRequest.tags, requestUser.id)
       .fold(
         this::handleDreamCreationError
       ) { ResponseEntity(it, HttpStatus.CREATED) }
@@ -182,6 +183,9 @@ class DreamController(
       is DreamCreationErrors.InvalidDate -> "Invalid dreamt date"
       is DreamCreationErrors.CreatorNotFound -> "User with id ${error.userId} was not found"
       is DreamCreationErrors.PersistenceError -> persistenceErrorString
+      is TagCreationErrors.TitleMissing -> "Tag title is missing"
+      is TagCreationErrors.TitleTooLong -> "Tag title cannot be longer than 20 characters"
+      is TagCreationErrors.CreationError -> "Something failed while creating tag"
     }, HttpStatus.BAD_REQUEST)
 
   private val persistenceErrorString = "Database operation failed"

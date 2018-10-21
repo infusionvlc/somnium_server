@@ -4,6 +4,7 @@ data class DreamRequest(
   val title: String = "",
   val description: String = "",
   val dreamtDate: Long = 0,
+  val tags: List<String> = emptyList(),
   val public: Boolean = true
 )
 

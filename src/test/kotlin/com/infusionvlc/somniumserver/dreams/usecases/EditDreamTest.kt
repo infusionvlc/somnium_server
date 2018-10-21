@@ -7,6 +7,7 @@ import com.infusionvlc.somniumserver.dreams.models.DreamEditionErrors
 import com.infusionvlc.somniumserver.dreams.models.DreamRequest
 import com.infusionvlc.somniumserver.dreams.persistence.DreamDAO
 import com.infusionvlc.somniumserver.mock
+import com.infusionvlc.somniumserver.tags.usecases.GetOrCreateTag
 import com.infusionvlc.somniumserver.users.usecases.FindUserById
 import io.kotlintest.assertions.arrow.either.shouldBeLeft
 import io.kotlintest.matchers.types.shouldBeTypeOf
@@ -18,7 +19,8 @@ class EditDreamTest : StringSpec() {
 
   private val mockDao = mock<DreamDAO>()
   private val mockFindUser = mock<FindUserById>()
-  private val editDream = EditDream(mockDao, mockFindUser)
+  private val mockGetOrCreateTag = mock<GetOrCreateTag>()
+  private val editDream = EditDream(mockDao, mockFindUser, mockGetOrCreateTag)
 
   init {
 
