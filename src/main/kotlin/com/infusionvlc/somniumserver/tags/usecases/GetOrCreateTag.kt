@@ -1,18 +1,21 @@
 package com.infusionvlc.somniumserver.tags.usecases
 
 import arrow.core.Either
+import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.right
+import com.infusionvlc.somniumserver.base.toEither
 import com.infusionvlc.somniumserver.dreams.models.TagCreationErrors
 import com.infusionvlc.somniumserver.tags.models.Tag
-import com.infusionvlc.somniumserver.tags.persistence.TagRepository
+import com.infusionvlc.somniumserver.tags.persistence.TagDAO
+import com.infusionvlc.somniumserver.tags.persistence.TagLocalDatasource
 import com.infusionvlc.somniumserver.tags.persistence.toDomain
 import com.infusionvlc.somniumserver.tags.persistence.toEntity
 import org.springframework.stereotype.Component
 
 @Component
 class GetOrCreateTag(
-  private val dao: TagRepository,
+  private val dao: TagDAO,
   private val findTagByTitle: FindTagByTitle
 ) {
   fun execute(title: String): Either<TagCreationErrors, Tag> {
@@ -20,7 +23,7 @@ class GetOrCreateTag(
 
     return if (tagOption.isEmpty()) {
       validate(title)
-        .map { dao.save(it.toEntity()).toDomain() }
+        .flatMap { dao.save(it).toEither { TagCreationErrors.PersistenceError } }
     } else {
       tagOption.get().right()
     }

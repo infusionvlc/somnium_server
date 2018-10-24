@@ -1,11 +1,14 @@
 package com.infusionvlc.somniumserver.dreams.usecases
 
 import arrow.core.Option
+import arrow.core.Try
+import com.infusionvlc.somniumserver.AnyMocker
 import com.infusionvlc.somniumserver.dreams.models.TagCreationErrors
 import com.infusionvlc.somniumserver.mock
 import com.infusionvlc.somniumserver.tags.models.Tag
+import com.infusionvlc.somniumserver.tags.persistence.TagDAO
 import com.infusionvlc.somniumserver.tags.persistence.TagEntity
-import com.infusionvlc.somniumserver.tags.persistence.TagRepository
+import com.infusionvlc.somniumserver.tags.persistence.TagLocalDatasource
 import com.infusionvlc.somniumserver.tags.usecases.FindTagByTitle
 import com.infusionvlc.somniumserver.tags.usecases.GetOrCreateTag
 import io.kotlintest.assertions.arrow.either.shouldBeLeft
@@ -15,9 +18,9 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.anyString
 
-class GetOrCreateTagTest : StringSpec() {
+class GetOrCreateTagTest : StringSpec(), AnyMocker {
 
-  private val mockDao = mock<TagRepository>()
+  private val mockDao = mock<TagDAO>()
   private val mockFindTagByTitle = mock<FindTagByTitle>()
   private val getOrCreateTag = GetOrCreateTag(mockDao, mockFindTagByTitle)
 
@@ -46,7 +49,7 @@ class GetOrCreateTagTest : StringSpec() {
     }
 
     "If the tag didn't exist and title is valid creates a new tag and return it" {
-      `when`(mockDao.save(any(TagEntity::class.java))).thenReturn(TagEntity())
+      `when`(mockDao.save(any())).thenReturn(Try.just(Tag(0, "Title", 123, 123)))
       findTagMockWillReturnEmpty()
 
       getOrCreateTag.execute("Title").shouldBeRight()

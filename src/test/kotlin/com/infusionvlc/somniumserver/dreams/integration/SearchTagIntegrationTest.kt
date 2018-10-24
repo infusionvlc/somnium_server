@@ -3,7 +3,7 @@ package com.infusionvlc.somniumserver.dreams.integration
 import com.infusionvlc.somniumserver.getForEntityAuthorized
 import com.infusionvlc.somniumserver.tags.models.Tag
 import com.infusionvlc.somniumserver.tags.persistence.TagEntity
-import com.infusionvlc.somniumserver.tags.persistence.TagRepository
+import com.infusionvlc.somniumserver.tags.persistence.TagLocalDatasource
 import com.infusionvlc.somniumserver.tags.persistence.toDomain
 import com.infusionvlc.somniumserver.users.persistence.UserRepository
 import io.kotlintest.Description
@@ -35,7 +35,7 @@ class SearchTagIntegrationTest : WordSpec() {
   var port: Int = 0
 
   @Autowired
-  lateinit var tagDao: TagRepository
+  lateinit var localDatasource: TagLocalDatasource
   @Autowired
   lateinit var userDao: UserRepository
 
@@ -74,8 +74,8 @@ class SearchTagIntegrationTest : WordSpec() {
   }
 
   fun givenTags() {
-    NIGHTMARE_TAG = tagDao.save(TagEntity(1, "Nightmare", 1234567890, 1234567890, emptyList())).toDomain()
-    DEJAVU_TAG = tagDao.save(TagEntity(2, "DejaVu", 1234567890, 1234567890, emptyList())).toDomain()
-    LUCID_TAG = tagDao.save(TagEntity(3, "Lucid", 1234567890, 1234567890, emptyList())).toDomain()
+    NIGHTMARE_TAG = localDatasource.save(TagEntity(1, "Nightmare", 1234567890, 1234567890, emptyList())).toDomain()
+    DEJAVU_TAG = localDatasource.save(TagEntity(2, "DejaVu", 1234567890, 1234567890, emptyList())).toDomain()
+    LUCID_TAG = localDatasource.save(TagEntity(3, "Lucid", 1234567890, 1234567890, emptyList())).toDomain()
   }
 }
