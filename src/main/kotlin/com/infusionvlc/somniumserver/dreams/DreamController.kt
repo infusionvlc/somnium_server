@@ -186,6 +186,7 @@ class DreamController(
       is TagCreationErrors.TitleMissing -> "Tag title is missing"
       is TagCreationErrors.TitleTooLong -> "Tag title cannot be longer than 20 characters"
       is TagCreationErrors.CreationError -> "Something failed while creating tag"
+      is TagCreationErrors.PersistenceError -> persistenceErrorString
     }, HttpStatus.BAD_REQUEST)
 
   private val persistenceErrorString = "Database operation failed"
