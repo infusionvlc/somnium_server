@@ -48,24 +48,24 @@ class SearchTagIntegrationTest : WordSpec() {
       givenTags()
 
       "Get Nightmare tag ig contains 'night' words" {
-        val result = restTemplate.
-          getForEntityAuthorized<Array<Tag>>("http://localhost:$port/tags/v1/search?title=night&page=0&page_size=20")
+        val result = restTemplate
+          .getForEntityAuthorized<Array<Tag>>("http://localhost:$port/tags/v1/search?title=night&page=0&page_size=20")
 
         result.statusCode shouldBe HttpStatus.OK
         result.body!!.toList() shouldContain NIGHTMARE_TAG
       }
 
       "Get all tags that cointains the letter 'a' in the title" {
-        val result = restTemplate.
-          getForEntityAuthorized<Array<Tag>>("http://localhost:$port/tags/v1/search?title=a&page=0&page_size=20")
+        val result = restTemplate
+          .getForEntityAuthorized<Array<Tag>>("http://localhost:$port/tags/v1/search?title=a&page=0&page_size=20")
 
         result.statusCode shouldBe HttpStatus.OK
         result.body!!.toList() shouldContainAll listOf(NIGHTMARE_TAG, DEJAVU_TAG)
       }
 
       "Insensitive case search" {
-        val result = restTemplate.
-          getForEntityAuthorized<Array<Tag>>("http://localhost:$port/tags/v1/search?title=lUcId&page=0&page_size=20")
+        val result = restTemplate
+          .getForEntityAuthorized<Array<Tag>>("http://localhost:$port/tags/v1/search?title=lUcId&page=0&page_size=20")
 
         result.statusCode shouldBe HttpStatus.OK
         result.body!!.toList() shouldContain LUCID_TAG

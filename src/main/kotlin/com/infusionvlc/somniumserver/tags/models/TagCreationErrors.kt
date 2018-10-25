@@ -4,5 +4,5 @@ sealed class TagCreationErrors {
   object TitleMissing : TagCreationErrors()
   object TitleTooLong : TagCreationErrors()
   object CreationError : TagCreationErrors()
-  object PersistenceError: TagCreationErrors()
+  object PersistenceError : TagCreationErrors()
 }

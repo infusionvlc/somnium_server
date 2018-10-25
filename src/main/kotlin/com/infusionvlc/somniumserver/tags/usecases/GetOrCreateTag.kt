@@ -8,9 +8,6 @@ import com.infusionvlc.somniumserver.base.toEither
 import com.infusionvlc.somniumserver.dreams.models.TagCreationErrors
 import com.infusionvlc.somniumserver.tags.models.Tag
 import com.infusionvlc.somniumserver.tags.persistence.TagDAO
-import com.infusionvlc.somniumserver.tags.persistence.TagLocalDatasource
-import com.infusionvlc.somniumserver.tags.persistence.toDomain
-import com.infusionvlc.somniumserver.tags.persistence.toEntity
 import org.springframework.stereotype.Component
 
 @Component

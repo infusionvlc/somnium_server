@@ -7,8 +7,6 @@ import com.infusionvlc.somniumserver.dreams.models.TagCreationErrors
 import com.infusionvlc.somniumserver.mock
 import com.infusionvlc.somniumserver.tags.models.Tag
 import com.infusionvlc.somniumserver.tags.persistence.TagDAO
-import com.infusionvlc.somniumserver.tags.persistence.TagEntity
-import com.infusionvlc.somniumserver.tags.persistence.TagLocalDatasource
 import com.infusionvlc.somniumserver.tags.usecases.FindTagByTitle
 import com.infusionvlc.somniumserver.tags.usecases.GetOrCreateTag
 import io.kotlintest.assertions.arrow.either.shouldBeLeft
