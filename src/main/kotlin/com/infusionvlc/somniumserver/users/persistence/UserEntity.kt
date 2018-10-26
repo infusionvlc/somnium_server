@@ -2,13 +2,7 @@ package com.infusionvlc.somniumserver.users.persistence
 
 import com.infusionvlc.somniumserver.dreams.persistence.DreamEntity
 import com.infusionvlc.somniumserver.users.models.User
-import javax.persistence.CascadeType
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
-import javax.persistence.OneToMany
-import javax.persistence.Table
+import javax.persistence.*
 
 @Entity
 @Table(name = "Users")
@@ -22,7 +16,37 @@ data class UserEntity(
     cascade = [CascadeType.ALL],
     orphanRemoval = true
   )
-  val dreams: List<DreamEntity> = emptyList()
+  val dreams: List<DreamEntity> = emptyList(),
+
+  @ManyToMany(
+    fetch = FetchType.LAZY,
+    cascade = [CascadeType.ALL]
+  )
+  @JoinTable(
+    name = "users_following",
+    joinColumns = [JoinColumn(
+      name = "id"
+    )],
+    inverseJoinColumns = [JoinColumn(
+      name = "id"
+    )]
+  )
+  val following: List<UserEntity> = emptyList(),
+
+  @ManyToMany(
+    fetch = FetchType.LAZY,
+    cascade = [CascadeType.ALL]
+  )
+  @JoinTable(
+    name = "users_followers",
+    joinColumns = [JoinColumn(
+      name = "id"
+    )],
+    inverseJoinColumns = [JoinColumn(
+      name = "id"
+    )]
+  )
+  val followers: List<UserEntity> = emptyList()
 )
 
 fun UserEntity.toDomain(): User = User(
