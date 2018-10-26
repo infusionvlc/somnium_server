@@ -1,19 +1,19 @@
 package com.infusionvlc.somniumserver.users.usecases
 
+import arrow.core.identity
 import com.infusionvlc.somniumserver.users.models.RegisterRequest
 import com.infusionvlc.somniumserver.users.models.Role
 import com.infusionvlc.somniumserver.users.models.User
-import com.infusionvlc.somniumserver.users.persistence.UserRepository
-import com.infusionvlc.somniumserver.users.persistence.toDomain
-import com.infusionvlc.somniumserver.users.persistence.toEntity
+import com.infusionvlc.somniumserver.users.persistence.UserDAO
 import org.springframework.context.annotation.Bean
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Component
+import java.lang.Exception
 
 @Component
 class RegisterUser(
-  private val dao: UserRepository
+  private val dao: UserDAO
 ) {
 
   @Bean
@@ -25,10 +25,12 @@ class RegisterUser(
       0,
       username,
       passwordEncoder().encode(password),
+      emptyList(),
+      emptyList(),
       Role.userRole()
-    ).toEntity()
+    )
 
-    val result = dao.save(userEntity)
-    return result.toDomain()
+    val result = dao.saveUser(userEntity)
+    return result.fold({ throw Exception("Persistence exception") }, ::identity)
   }
 }

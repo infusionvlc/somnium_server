@@ -1,12 +1,9 @@
 package com.infusionvlc.somniumserver.dreams.persistence
 
 import com.infusionvlc.somniumserver.dreams.models.Dream
-import com.infusionvlc.somniumserver.users.models.User
 import com.infusionvlc.somniumserver.users.persistence.UserEntity
-import com.infusionvlc.somniumserver.users.persistence.toEntity
 import com.infusionvlc.somniumserver.tags.persistence.TagEntity
 import com.infusionvlc.somniumserver.tags.persistence.toDomain
-import com.infusionvlc.somniumserver.tags.persistence.toEntity
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
@@ -46,8 +43,4 @@ fun DreamEntity.toDomain(): Dream = Dream(
   updateDate = this.updateDate,
   dreamtDate = this.dreamtDate,
   public = this.public
-)
-
-fun Dream.toEntity(user: User): DreamEntity = DreamEntity(
-  id, title, description, creationDate, updateDate, dreamtDate, public, user.toEntity(), tags.map { it.toEntity() }
 )

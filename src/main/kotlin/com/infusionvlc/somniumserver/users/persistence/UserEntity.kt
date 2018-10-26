@@ -2,7 +2,17 @@ package com.infusionvlc.somniumserver.users.persistence
 
 import com.infusionvlc.somniumserver.dreams.persistence.DreamEntity
 import com.infusionvlc.somniumserver.users.models.User
-import javax.persistence.*
+import javax.persistence.CascadeType
+import javax.persistence.Entity
+import javax.persistence.FetchType
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.JoinTable
+import javax.persistence.ManyToMany
+import javax.persistence.OneToMany
+import javax.persistence.Table
 
 @Entity
 @Table(name = "Users")
@@ -52,11 +62,7 @@ data class UserEntity(
 fun UserEntity.toDomain(): User = User(
   id = id,
   username = username,
-  password = password
-)
-
-fun User.toEntity(): UserEntity = UserEntity(
-  id = id,
-  username = username,
-  password = password
+  password = password,
+  followings = this.following.map { it.id },
+  followers = this.followers.map { it.id }
 )

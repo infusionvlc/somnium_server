@@ -2,14 +2,20 @@ package com.infusionvlc.somniumserver.dreams.persistence
 
 import arrow.core.Option
 import arrow.core.Try
+import arrow.core.identity
 import com.infusionvlc.somniumserver.base.toOption
 import com.infusionvlc.somniumserver.dreams.models.Dream
+import com.infusionvlc.somniumserver.tags.persistence.toEntity
 import com.infusionvlc.somniumserver.users.models.User
+import com.infusionvlc.somniumserver.users.persistence.UserRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Component
 
 @Component
-class DreamDAO(private val localDatasource: DreamLocalDatasource) {
+class DreamDAO(
+  private val localDatasource: DreamLocalDatasource,
+  private val userLocalDatasource: UserRepository
+) {
 
   fun findAllVisibleByUser(userId: Long, page: Int, pageSize: Int): List<Dream> = localDatasource
     .findAllVisibleByUser(userId, PageRequest.of(page, pageSize))
@@ -27,8 +33,25 @@ class DreamDAO(private val localDatasource: DreamLocalDatasource) {
     .map(DreamEntity::toDomain)
 
   fun saveDream(dream: Dream, user: User): Try<Dream> = Try {
+    val dreamEntity = localDatasource.findById(dream.id)
+      .toOption()
+      .map {
+        it.copy(
+          title = dream.title,
+          description = dream.description,
+          creationDate = dream.creationDate,
+          updateDate = dream.updateDate,
+          dreamtDate = dream.dreamtDate,
+          public = dream.public,
+          tags = dream.tags.map { it.toEntity() },
+          user = userLocalDatasource.findById(dream.userId).toOption()
+            .fold({ throw Exception("Persistence error") }, ::identity)
+        )
+      }
+      .fold({ throw Exception("Persistence error") }, ::identity)
+
     localDatasource
-      .save(dream.toEntity(user))
+      .save(dreamEntity)
       .toDomain()
   }
 

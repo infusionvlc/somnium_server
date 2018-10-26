@@ -33,7 +33,8 @@ class CreateDreamTest : StringSpec(), AnyMocker {
   private val createDream = CreateDream(mockDao, mockFindUser, mockCreateTag)
 
   private fun findUserMockWillReturnUser() {
-    `when`(mockFindUser.execute(anyLong())).thenReturn(Option.just(User(0, "test", "test")))
+    `when`(mockFindUser.execute(anyLong()))
+      .thenReturn(Option.just(User(0, "test", "test", emptyList(), emptyList())))
   }
 
   private fun findUserMockWillReturnEmpty() {
