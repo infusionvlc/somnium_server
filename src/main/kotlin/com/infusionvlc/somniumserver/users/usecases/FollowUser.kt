@@ -43,6 +43,13 @@ class FollowUser(
     if (targetUser.id == myUser.id) Errors.FollowingMyself.left() else targetUser.right()
 
   private fun amIFollowingTargetUser(targetUser: User, myUser: User): Either<Errors, User> =
-    if (myUser.followings.find { it == targetUser.id } == null) Errors.FollowingUserAlready.left()
-    else targetUser.right()
+    userDAO.isUserFollowingTarget(targetUser, myUser)
+      .toEither { Errors.PersistenceError }
+      .flatMap {
+        if (it) {
+          Errors.FollowingUserAlready.left()
+        } else {
+          targetUser.right()
+        }
+      }
 }

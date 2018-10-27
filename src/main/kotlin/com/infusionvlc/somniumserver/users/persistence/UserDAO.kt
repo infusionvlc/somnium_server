@@ -6,9 +6,9 @@ import arrow.core.identity
 import arrow.core.toOption
 import com.infusionvlc.somniumserver.base.toOption
 import com.infusionvlc.somniumserver.users.models.User
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 
-@Component
+@Service
 class UserDAO(private val localDatasource: UserRepository) {
 
   fun findById(id: Long): Option<User> =
@@ -47,6 +47,12 @@ class UserDAO(private val localDatasource: UserRepository) {
             result.toDomain()
           }
       }.fold({ throw Exception("User not found") }, ::identity)
+  }
+
+  fun isUserFollowingTarget(targetUser: User, user: User): Try<Boolean> = Try {
+    val result = localDatasource.findTargetUserInUserFollowing(targetUser.id, user.id)
+
+    result.isPresent
   }
 
   fun deleteUser(user: User): Try<Boolean> = Try {

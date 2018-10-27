@@ -34,27 +34,15 @@ data class UserEntity(
   )
   @JoinTable(
     name = "users_following",
-    joinColumns = [JoinColumn(
-      name = "id"
-    )],
-    inverseJoinColumns = [JoinColumn(
-      name = "id"
-    )]
+    joinColumns = [JoinColumn(name = "following_id")],
+    inverseJoinColumns = [JoinColumn(name = "follower_id")]
   )
   val following: List<UserEntity> = emptyList(),
 
   @ManyToMany(
+    mappedBy = "following",
     fetch = FetchType.LAZY,
     cascade = [CascadeType.ALL]
-  )
-  @JoinTable(
-    name = "users_followers",
-    joinColumns = [JoinColumn(
-      name = "id"
-    )],
-    inverseJoinColumns = [JoinColumn(
-      name = "id"
-    )]
   )
   val followers: List<UserEntity> = emptyList()
 )
@@ -62,7 +50,5 @@ data class UserEntity(
 fun UserEntity.toDomain(): User = User(
   id = id,
   username = username,
-  password = password,
-  followings = this.following.map { it.id },
-  followers = this.followers.map { it.id }
+  password = password
 )

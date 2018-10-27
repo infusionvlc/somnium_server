@@ -25,8 +25,6 @@ class RegisterUser(
       0,
       username,
       passwordEncoder().encode(password),
-      emptyList(),
-      emptyList(),
       Role.userRole()
     )
 

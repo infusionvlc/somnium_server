@@ -34,7 +34,7 @@ class CreateDreamTest : StringSpec(), AnyMocker {
 
   private fun findUserMockWillReturnUser() {
     `when`(mockFindUser.execute(anyLong()))
-      .thenReturn(Option.just(User(0, "test", "test", emptyList(), emptyList())))
+      .thenReturn(Option.just(User(0, "test", "test")))
   }
 
   private fun findUserMockWillReturnEmpty() {

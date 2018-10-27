@@ -9,9 +9,9 @@ import com.infusionvlc.somniumserver.tags.persistence.toEntity
 import com.infusionvlc.somniumserver.users.models.User
 import com.infusionvlc.somniumserver.users.persistence.UserRepository
 import org.springframework.data.domain.PageRequest
-import org.springframework.stereotype.Component
+import org.springframework.stereotype.Service
 
-@Component
+@Service
 class DreamDAO(
   private val localDatasource: DreamLocalDatasource,
   private val userLocalDatasource: UserRepository
