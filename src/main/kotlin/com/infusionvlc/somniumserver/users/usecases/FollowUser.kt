@@ -1,11 +1,11 @@
 package com.infusionvlc.somniumserver.users.usecases
 
 import arrow.core.Either
-import arrow.core.flatMap
+import arrow.core.fix
 import arrow.core.left
-import arrow.core.right
+import arrow.core.monad
+import arrow.typeclasses.binding
 import com.infusionvlc.somniumserver.base.toEither
-import com.infusionvlc.somniumserver.users.models.User
 import com.infusionvlc.somniumserver.users.persistence.UserDAO
 import org.springframework.stereotype.Component
 
@@ -21,35 +21,14 @@ class FollowUser(
     object FollowingMyself : Errors()
   }
 
-  fun execute(targetUserId: Long, myUserId: Long): Either<Errors, User> =
-    userDAO.findById(targetUserId)
-      .toEither { Errors.UserNotFound }
-      .flatMap { targetUser ->
-        userDAO.findById(myUserId)
-          .toEither { Errors.PersistenceError }
-          .flatMap { myUser ->
-            amIFollowingTargetUser(targetUser, myUser)
-              .flatMap {
-                amIFollowingMyself(targetUser, myUser)
-                  .flatMap {
-                    userDAO.addFollowersRelation(targetUser, myUser)
-                      .toEither { Errors.PersistenceError }
-                  }
-              }
-          }
-      }
-
-  private fun amIFollowingMyself(targetUser: User, myUser: User): Either<Errors, User> =
-    if (targetUser.id == myUser.id) Errors.FollowingMyself.left() else targetUser.right()
-
-  private fun amIFollowingTargetUser(targetUser: User, myUser: User): Either<Errors, User> =
-    userDAO.isUserFollowingTarget(targetUser, myUser)
-      .toEither { Errors.PersistenceError }
-      .flatMap {
-        if (it) {
-          Errors.FollowingUserAlready.left()
-        } else {
-          targetUser.right()
-        }
-      }
+  fun execute(targetUserId: Long, myUserId: Long): Either<Errors, Unit> =
+    Either.monad<Errors>().binding {
+      val targetUser = userDAO.findById(targetUserId)
+        .toEither { Errors.UserNotFound }.bind()
+      val myUser = userDAO.findById(myUserId)
+        .toEither { Errors.PersistenceError }.bind()
+      if (amIFollowingTargetUser(targetUser, myUser))
+        userDAO.addFollowersRelation(targetUser, myUser)
+          .toEither { Errors.PersistenceError }.bind()
+    }.fix()
 }
